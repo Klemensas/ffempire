@@ -120,6 +120,11 @@ let transpileClient = lazypipe()
     .pipe(plugins.sourcemaps.init)
     .pipe(plugins.babel)
     .pipe(plugins.sourcemaps.write, '.');
+
+let transpileServer = lazypipe()
+    .pipe(plugins.sourcemaps.init)
+    .pipe(plugins.babel)
+    .pipe(plugins.sourcemaps.write, '.');
 /********************
  * Tasks
  ********************/
@@ -225,6 +230,12 @@ gulp.task('transpile:client', () => {
         .pipe(gulp.dest('.tmp'));
 });
 
+gulp.task('transpile:server', () => {
+    return gulp.src(_.union(paths.server.scripts, paths.server.json))
+        .pipe(transpileServer())
+        .pipe(gulp.dest(`${paths.dist}/${serverPath}`));
+});
+
 gulp.task('styles', () => {
     return gulp.src(paths.client.mainStyle)
         .pipe(styles())
@@ -243,6 +254,55 @@ gulp.task('start:client', cb => {
         open('http://localhost:' + config.port);
         cb();
     });
+});
+
+gulp.task('clean:dist', () => del([`${paths.dist}/!(.git*|.openshift|Procfile)**`], {dot: true}));
+
+gulp.task('build:images', () => {
+    return gulp.src(paths.client.images)
+        .pipe(plugins.imagemin({
+            optimizationLevel: 5,
+            progressive: true,
+            interlaced: true
+        }))
+        .pipe(plugins.rev())
+        .pipe(gulp.dest(`${paths.dist}/${clientPath}/assets/images`))
+        .pipe(plugins.rev.manifest(`${paths.dist}/${clientPath}/assets/rev-manifest.json`, {
+            base: `${paths.dist}/${clientPath}/assets`,
+            merge: true
+        }))
+        .pipe(gulp.dest(`${paths.dist}/${clientPath}/assets`));
+});
+
+gulp.task('copy:extras', () => {
+    return gulp.src([
+        `${clientPath}/favicon.ico`,
+        `${clientPath}/robots.txt`,
+        `${clientPath}/.htaccess`
+    ], { dot: true })
+        .pipe(gulp.dest(`${paths.dist}/${clientPath}`));
+});
+
+gulp.task('copy:assets', () => {
+    return gulp.src([paths.client.assets, '!' + paths.client.images])
+        .pipe(gulp.dest(`${paths.dist}/${clientPath}/assets`));
+});
+
+gulp.task('copy:server', () => {
+    return gulp.src([
+        'package.json',
+        'bower.json',
+        '.bowerrc'
+    ], {cwdbase: true})
+        .pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('html', function() {
+    return gulp.src(`${clientPath}/{app,components}/**/*.html`)
+        .pipe(plugins.angularTemplatecache({
+            module: 'faster'
+        }))
+        .pipe(gulp.dest('.tmp'));
 });
 
 gulp.task('watch', () => {
@@ -284,4 +344,52 @@ gulp.task('serve', cb => {
         ['start:server', 'start:client'],
         'watch',
         cb);
+});
+
+gulp.task('build', cb => {
+    runSequence(
+        'clean:dist',
+        'clean:tmp',
+        'inject',
+        'wiredep:client',
+        [
+            'build:images',
+            'copy:extras',
+            'copy:assets',
+            'transpile:server',
+            'copy:server',
+            'build:client'
+        ],
+        cb);
+});
+
+gulp.task('build:client', ['transpile:client', 'styles', 'html', 'constant'], () => {
+    var manifest = gulp.src(`${paths.dist}/${clientPath}/assets/rev-manifest.json`);
+
+    var appFilter = plugins.filter('**/app.js', {restore: true});
+    var jsFilter = plugins.filter('**/*.js', {restore: true});
+    var cssFilter = plugins.filter('**/*.css', {restore: true});
+    var htmlBlock = plugins.filter(['**/*.!(html)'], {restore: true});
+
+    return gulp.src(paths.client.mainView)
+        .pipe(plugins.useref())
+            .pipe(appFilter)
+                .pipe(plugins.addSrc.append('.tmp/templates.js'))
+                .pipe(plugins.concat('app/app.js'))
+            .pipe(appFilter.restore)
+            .pipe(jsFilter)
+                .pipe(plugins.ngAnnotate())
+                .pipe(plugins.uglify())
+            .pipe(jsFilter.restore)
+            .pipe(cssFilter)
+                .pipe(plugins.minifyCss({
+                    cache: true,
+                    processImportFrom: ['!fonts.googleapis.com']
+                }))
+            .pipe(cssFilter.restore)
+            .pipe(htmlBlock)
+                .pipe(plugins.rev())
+            .pipe(htmlBlock.restore)
+        .pipe(plugins.revReplace({manifest}))
+        .pipe(gulp.dest(`${paths.dist}/${clientPath}`));
 });
