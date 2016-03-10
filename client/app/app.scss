@@ -18,5 +18,7 @@ $fa-font-path: "../bower_components/font-awesome/fonts";
 // Component styles are injected through grunt
 // injector
 @import 'admin/admin';
+@import 'game/map';
 @import 'main/main';
+@import '../components/footer/footer';
 // endinjector

@@ -1,28 +1,30 @@
-<header class="hero-unit" id="banner">
-  <div class="container">
-    <h1>'Allo, 'Allo!</h1>
-    <p class="lead">Kick-start your next web app with Angular Fullstack</p>
-    <img src="assets/images/yeoman.png" alt="I'm Yeoman">
-  </div>
-</header>
-
-<div class="container">
-  <div class="row">
-    <div class="col-lg-12">
-      <h1 class="page-header">Features:</h1>
-      <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="thing in main.awesomeThings">
-        <li><a href="#" tooltip="{{thing.info}}">{{thing.name}}<button type="button" class="close" ng-click="main.deleteThing(thing)">&times;</button></a></li>
-      </ul>
+<header>
+    <div class="food-background">
+        <div class="position">
+            <h1>Fast Food Empire</h1>
+            <p class="lead">Run your own food empire!</p>
+        </div>
     </div>
-  </div>
-
-  <form class="thing-form">
-    <label>Syncs in realtime across clients</label>
-    <p class="input-group">
-      <input type="text" class="form-control" placeholder="Add a new thing here." ng-model="main.newThing">
-      <span class="input-group-btn">
-        <button type="submit" class="btn btn-primary" ng-click="main.addThing()">Add New</button>
-      </span>
-    </p>
-  </form>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">About the game <button ng-show="nav.isLoggedIn()" ui-sref="game" class="btn btn-lg btn-primary">Play</button>
+</h1>
+            <ul class="nav  nav-tabs row">
+                <li class="col-md-4 col-lg-4 col-sm-6">
+                    <h3>Goal</h3>
+                    <div>Players compete for influence over the city of Megapolis and various districts in it. They gain influence by upgrading and expanding their own restaurant empire, at first each player starts with one restaurant but can start taking over other food joints once they have the necessary upgrades.</div>
+                </li>
+                <li class="col-md-4 col-lg-4 col-sm-6">
+                    <h3>Real time</h3>
+                    <div>The game is played in real time. Players gain resources over time whch they use to upgrade their restaurant and hire workers. Each upgrade takes a certain amount of time which increases as the restaurant progresses. Players can hire workers to interfere with their neighbor business.</div>
+                </li>
+                <li class="col-md-4 col-lg-4 col-sm-6">
+                    <h3>Ending</h3>
+                    <div>The server stops accepting new players after a certain amount of time/players thus allowing a domination victory. Such a victory is achieved when a group of players join into a franchise and once it reaches a dominant percentage of influence in Megapolis.</div>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
