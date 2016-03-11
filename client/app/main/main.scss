@@ -27,3 +27,14 @@ $food-moto: #5a5a5a;
     text-align: center;
   }
 }
+
+@media (max-width: 768px) {
+  .food-background {
+    background-size: cover;
+    .position {
+      width: 100%;
+      margin-left: 0;
+    }
+    
+  }
+}

@@ -1,5 +1,112 @@
-#canvas-container {
-	width: 80vh;
-	height: 80vh;
-	border: 1px solid red;
+$axis-color: #ffffff;
+.map-wrapper {
+    margin: 40px;
+    width: 80vh;
+    height: 80vh;
+    position: relative;
+    #map-container {
+        display: none;
+        width: 100%;
+        height: 100%;
+        .map-field {
+            float: left;
+            .restaurant {
+                width: 100%;
+                height: 100%;
+                background: url(/assets/map/restaurant.png) no-repeat center;
+                background-size: 90%;
+            }
+            &[data-field="1"] {
+                background: url(/assets/map/grass.png) no-repeat center;
+                background-size: cover;
+            }
+            &[data-field="2"] {
+                background: url(/assets/map/grass2.png) no-repeat center;
+                background-size: cover;
+            }
+            &[data-field="3"] {
+                background: url(/assets/map/grass3.png) no-repeat center;
+                background-size: cover;
+            }
+            &[data-field="4"] {
+                background: url(/assets/map/grass4.png) no-repeat center;
+                background-size: cover;
+            }
+            &[data-field="5"] {
+                background: url(/assets/map/grass5.png) no-repeat center;
+                background-size: cover;
+            }
+            &[data-field="6"] {
+                background: url(/assets/map/grass6.png) no-repeat center;
+                background-size: cover;
+            }
+            &[data-field="7"] {
+                background: url(/assets/map/grass7.png) no-repeat center;
+                background-size: cover;
+            }
+        }
+        &.active {
+            display: block;
+        }
+    }
+    .map-nav {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        > div {
+            position: absolute;
+            font-size: 40px;
+            cursor: pointer;
+            &.up {
+                top: -50px;
+                left: 50%;
+                margin-left: -20px;
+            }
+            &.right {
+                top: 50%;
+                right: -35px;
+                margin-top: -20px;
+            }
+            &.down {
+                bottom: -50px;
+                left: 50%;
+                margin-left: -20px;
+            }
+            &.left {
+                top: 50%;
+                left: -35px;
+                margin-top: -20px;
+            }
+        }
+    }
+    .map-axies {
+        color: $axis-color;
+        .x-axis {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            bottom: 0; //-20px;
+            div {
+                float: left;
+            }
+        }
+        .y-axis {
+            position: absolute;
+            height: 100%;
+            top: 0;
+            left: 0; //-20px;
+        }
+    }
+    &[data-column-size="7"] .map-field,
+    &[data-column-size="7"] .y-axis > div,
+    &[data-column-size="7"] .x-axis > div {
+        height: 1 / 7 * 100%;
+    }
+    &[data-row-size="7"] .map-field,
+    &[data-row-size="7"] .x-axis > div,
+    &[data-row-size="7"] .y-axis > div {
+        width: 1 / 7 * 100%;
+    }
 }
