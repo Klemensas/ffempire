@@ -66,7 +66,13 @@ export function show(req, res) {
 }
 
 export function restaurantView(req, res) {
-  res.status(200).send({"hallo":"nuj"});  
+  res.status(200).send();  
+}
+
+export function map(req, res) {
+  Restaurant.findAsync({}, 'location')
+  .then(respondWithResult(res))
+    .catch(handleError(res));
 }
 
 // Creates a new Restaurant in the DB
