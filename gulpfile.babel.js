@@ -265,12 +265,12 @@ gulp.task('build:images', () => {
             progressive: true,
             interlaced: true
         }))
-        .pipe(plugins.rev())
+        //.pipe(plugins.rev())
         .pipe(gulp.dest(`${paths.dist}/${clientPath}/assets/images`))
-        .pipe(plugins.rev.manifest(`${paths.dist}/${clientPath}/assets/rev-manifest.json`, {
-            base: `${paths.dist}/${clientPath}/assets`,
-            merge: true
-        }))
+        //.pipe(plugins.rev.manifest(`${paths.dist}/${clientPath}/assets/rev-manifest.json`, {
+        //    base: `${paths.dist}/${clientPath}/assets`,
+        //    merge: true
+        //}))
         .pipe(gulp.dest(`${paths.dist}/${clientPath}/assets`));
 });
 
@@ -281,6 +281,11 @@ gulp.task('copy:extras', () => {
         `${clientPath}/.htaccess`
     ], { dot: true })
         .pipe(gulp.dest(`${paths.dist}/${clientPath}`));
+});
+
+gulp.task('copy:fonts', () => {
+    return gulp.src(`${clientPath}/bower_components/{bootstrap,font-awesome}/fonts/**/*`, { dot: true })
+        .pipe(gulp.dest(`${paths.dist}/${clientPath}/bower_components`));
 });
 
 gulp.task('copy:assets', () => {
@@ -348,16 +353,19 @@ gulp.task('serve', cb => {
 
 gulp.task('build', cb => {
     runSequence(
-        'clean:dist',
-        'clean:tmp',
+        [
+            'clean:dist',
+            'clean:tmp'
+        ],
         'inject',
         'wiredep:client',
         [
             'build:images',
             'copy:extras',
+            'copy:fonts',
             'copy:assets',
-            'transpile:server',
             'copy:server',
+            'transpile:server',
             'build:client'
         ],
         cb);
