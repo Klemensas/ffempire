@@ -6,17 +6,17 @@ import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
 
 function validationError(res, statusCode) {
-  statusCode = statusCode || 422;
-  return function(err) {
-    res.status(statusCode).json(err);
-  };
+    statusCode = statusCode || 422;
+    return function(err) {
+        res.status(statusCode).json(err);
+    };
 }
 
 function handleError(res, statusCode) {
-  statusCode = statusCode || 500;
-  return function(err) {
-    res.status(statusCode).send(err);
-  };
+    statusCode = statusCode || 500;
+    return function(err) {
+        res.status(statusCode).send(err);
+    };
 }
 
 /**
@@ -24,11 +24,11 @@ function handleError(res, statusCode) {
  * restriction: 'admin'
  */
 export function index(req, res) {
-  User.findAsync({}, '-salt -password')
-    .then(users => {
-      res.status(200).json(users);
-    })
-    .catch(handleError(res));
+    return User.find({}, '-salt -password')
+        .then(users => {
+            res.status(200).json(users);
+        })
+        .catch(handleError(res));
 }
 
 /**
@@ -70,11 +70,11 @@ export function show(req, res, next) {
  * restriction: 'admin'
  */
 export function destroy(req, res) {
-  User.findByIdAndRemoveAsync(req.params.id)
-    .then(function() {
-      res.status(204).end();
-    })
-    .catch(handleError(res));
+    return User.findByIdAndRemove(req.params.id)
+        .then(function() {
+            res.status(204).end();
+        })
+        .catch(handleError(res));
 }
 
 /**
@@ -82,39 +82,39 @@ export function destroy(req, res) {
  */
 // export function changePassword(req, res, next) {
 export function changePassword(req, res) {
-  var userId = req.user._id;
-  var oldPass = String(req.body.oldPassword);
-  var newPass = String(req.body.newPassword);
+    var userId = req.user._id;
+    var oldPass = String(req.body.oldPassword);
+    var newPass = String(req.body.newPassword);
 
-  User.findByIdAsync(userId)
-    .then(user => {
-      if (user.authenticate(oldPass)) {
-        user.password = newPass;
-        return user.saveAsync()
-          .then(() => {
-            res.status(204).end();
-          })
-          .catch(validationError(res));
-      } else {
-        return res.status(403).end();
-      }
-    });
+    return User.findById(userId).exec()
+        .then(user => {
+            if (user.authenticate(oldPass)) {
+                user.password = newPass;
+                return user.save()
+                    .then(() => {
+                        res.status(204).end();
+                    })
+                    .catch(validationError(res));
+            } else {
+                return res.status(403).end();
+            }
+        });
 }
 
 /**
  * Get my info
  */
 export function me(req, res, next) {
-  var userId = req.user._id;
+    var userId = req.user._id;
 
-  User.findOne({ _id: userId }, '-salt -password').populate('gameData.restaurants')
-    .then(user => { // don't ever give out the password or salt
-      if (!user) {
-        return res.status(401).end();
-      }
-      res.json(user);
-    })
-    .catch(err => next(err));
+    return User.findOne({ _id: userId }, '-salt -password').populate('gameData.restaurants').exec()
+        .then(user => { // don't ever give out the password or salt
+            if (!user) {
+                return res.status(401).end();
+            }
+            res.json(user);
+        })
+        .catch(err => next(err));
 }
 
 /**

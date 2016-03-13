@@ -1,7 +1,8 @@
 'use strict';
 
 import crypto from 'crypto';
-var mongoose = require('bluebird').promisifyAll(require('mongoose'));
+import mongoose from 'mongoose';
+mongoose.Promise = require('bluebird');
 import {Schema} from 'mongoose';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
@@ -28,7 +29,7 @@ var UserSchema = new Schema({
       type: Boolean,
       default: false
     },
-    tribe: { type: mongoose.Schema.Types.ObjectId, ref: 'Tribe' },
+    franchise: { type: mongoose.Schema.Types.ObjectId, ref: 'Franchise' },
     restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],
   }
 });
@@ -86,7 +87,7 @@ UserSchema
   .path('email')
   .validate(function(value, respond) {
     var self = this;
-    return this.constructor.findOneAsync({ email: value })
+    return this.constructor.findOne({ email: value })
       .then(function(user) {
         if (user) {
           if (self.id === user.id) {

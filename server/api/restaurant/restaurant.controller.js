@@ -15,7 +15,7 @@ function respondWithResult(res, statusCode) {
 function saveUpdates(updates) {
   return function(entity) {
     var updated = _.merge(entity, updates);
-    return updated.saveAsync()
+    return updated.save()
       .spread(updated => {
         return updated;
       });
@@ -25,7 +25,7 @@ function saveUpdates(updates) {
 function removeEntity(res) {
   return function(entity) {
     if (entity) {
-      return entity.removeAsync()
+      return entity.remove()
         .then(() => {
           res.status(204).end();
         });
@@ -52,14 +52,14 @@ function handleError(res, statusCode) {
 
 // Gets a list of Things
 export function index(req, res) {
-  Restaurant.findAsync()
+  Restaurant.find()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
 // Gets a single Restaurant from the DB
 export function show(req, res) {
-  Restaurant.findByIdAsync(req.params.id)
+  Restaurant.findById(req.params.id)
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
@@ -70,14 +70,14 @@ export function restaurantView(req, res) {
 }
 
 export function map(req, res) {
-  Restaurant.findAsync({}, 'location')
+  Restaurant.find({}, 'location')
   .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
 // Creates a new Restaurant in the DB
 export function create(req, res) {
-  Restaurant.createAsync(req.body)
+  Restaurant.create(req.body)
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
@@ -87,7 +87,7 @@ export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  Restaurant.findByIdAsync(req.params.id)
+  Restaurant.findById(req.params.id)
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
     .then(respondWithResult(res))
@@ -96,7 +96,7 @@ export function update(req, res) {
 
 // Deletes a Restaurant from the DB
 export function destroy(req, res) {
-  Restaurant.findByIdAsync(req.params.id)
+  Restaurant.findById(req.params.id)
     .then(handleEntityNotFound(res))
     .then(removeEntity(res))
     .catch(handleError(res));

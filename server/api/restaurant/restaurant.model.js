@@ -1,9 +1,10 @@
 'use strict';
 
-var mongoose = require('bluebird').promisifyAll(require('mongoose'));
+import mongoose from 'mongoose';
+mongoose.Promise = require('bluebird');
 import {Schema} from 'mongoose';
 
-var RestaurantSchema = new mongoose.Schema({
+var RestaurantSchema = new Schema({
   name: String,
   location: [{type: Number}],
   resources: {
@@ -15,7 +16,10 @@ var RestaurantSchema = new mongoose.Schema({
   	kitchen: Number
   },
   info: String,
-  active: Boolean
+  active: {
+    type: Boolean,
+    default: true
+  }
 });
 
 export default mongoose.model('Restaurant', RestaurantSchema);

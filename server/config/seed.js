@@ -50,28 +50,29 @@ function populateUsers() {
         let ind = Math.floor(Math.random() * savedRestaurants.length);
         let rest = savedRestaurants.splice(ind, 1);
         user.gameData.restaurants = rest;
-        User.createAsync(user)
-            .then((user) => {
+        User.create(user)
+            .then(() => {
                 if (i === users.length - 1) {
                     console.log('Seeding done.');
                 }
+                return true;
             });
     });
     return;
 }
 
 console.log('Seeding database.');
-User.find({}).removeAsync().then(() => {
-    Restaurant.find({}).removeAsync()
+User.find({}).remove().then(() => {
+    Restaurant.find({}).remove()
         .then(() => {
             restaurants.forEach((rest, i) => {
-                Restaurant.createAsync(rest)
+                Restaurant.create(rest)
                     .then((rest) => {
                         savedRestaurants.push(rest);
                         if (i === restaurants.length - 1) {
                             populateUsers();
                         }
-                        return;
+                        return true;
                     });
             });
             return true;
