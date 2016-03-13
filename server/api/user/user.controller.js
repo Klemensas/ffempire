@@ -2,6 +2,8 @@
 
 import User from './user.model';
 // import passport from 'passport';
+import Restaurant from '../restaurant/restaurant.model';
+import { generateRestaurant } from '../restaurant/restaurant.controller';
 import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
 
@@ -36,33 +38,36 @@ export function index(req, res) {
  */
 // export function create(req, res, next) {
 export function create(req, res) {
-  var newUser = new User(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
-  newUser.saveAsync()
-    .spread(function(user) {
-      var token = jwt.sign({ _id: user._id }, config.secrets.session, {
-        expiresIn: 60 * 60 * 5
-      });
-      res.json({ token });
-    })
-    .catch(validationError(res));
+    var newUser = new User(req.body);
+    newUser.provider = 'local';
+    newUser.role = 'user';
+    newUser.save()
+        .then(user => {
+            addRestaurant(user)
+                .then((user) => {
+                    var token = jwt.sign({ _id: user._id }, config.secrets.session, {
+                        expiresIn: 60 * 60 * 5
+                    });
+                    res.json({ token });
+                });
+        })
+        .catch(validationError(res));
 }
 
 /**
  * Get a single user
  */
 export function show(req, res, next) {
-  var userId = req.params.id;
+    var userId = req.params.id;
 
-  User.findByIdAsync(userId)
-    .then(user => {
-      if (!user) {
-        return res.status(404).end();
-      }
-      res.json(user.profile);
-    })
-    .catch(err => next(err));
+    return User.findById(userId).exec()
+        .then(user => {
+            if (!user) {
+                return res.status(404).end();
+            }
+            res.json(user.profile);
+        })
+        .catch(err => next(err));
 }
 
 /**
@@ -122,5 +127,21 @@ export function me(req, res, next) {
  */
 // export function authCallback(req, res, next) {
 export function authCallback(req, res) {
-  res.redirect('/');
+    res.redirect('/');
+}
+
+function addRestaurant(user) {
+    return generateRestaurant(user)
+        .then(rest => {
+            console.log('generated res');
+            console.log(rest);
+            user.gameData = {
+                active: true,
+                restaurants: [rest]
+            };
+            return user.save()
+                .then(user => {
+                    return user;
+                });
+        });
 }

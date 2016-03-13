@@ -101,3 +101,28 @@ export function destroy(req, res) {
     .then(removeEntity(res))
     .catch(handleError(res));
 }
+
+// Generates a restaurant for new players
+export function generateRestaurant(user) {
+  return Restaurant.find({}, 'location -_id')
+    .then(resList => {
+      let location = findSuitable(resList);
+      console.log(location);
+      return Restaurant.create({
+        name: user.name + 's restaurant',
+        location: location
+      });
+    });
+}
+
+function findSuitable(list) {
+  let x = Math.floor(Math.random() * 100 + 1);
+  let y = Math.floor(Math.random() * 100 + 1);
+  let duplicates = _.find(list, el => { return (el.location[0] === x && el.location[1] === y); });
+  console.log('dup');
+  console.log(duplicates);
+  if(typeof duplicates === 'undefined') {
+    return [x, y];
+  }
+  findSuitable(list);
+}
