@@ -1,4 +1,4 @@
-# [Fast Food Empire](http://46.101.148.94)
+# [Fast Food Empire](https://klemensas.xyz)
 
 ## About the project
 Ffempire project is my take on [tribal was](http://tribalwars.net), it borrows the best concepts of the game, attempts to improve them and adds new unique features. The game explores a fast food restaurant management theme.
