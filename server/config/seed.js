@@ -7,16 +7,19 @@
 // import Thing from '../api/thing/thing.model';
 import User from '../api/user/user.model';
 import Restaurant from '../api/restaurant/restaurant.model';
+import buildings from './game/buildings';
+
+
 // Loop through 100*100 fields generating restaurants at %
 let chance = 0.22;
 let restaurants = [];
 for (let i = 1; i < 100; i++) {
     for (let j = 1; j < 100; j++) {
         if (Math.random() <= chance) {
-
             restaurants.push({
                 name: 'Restaurant #' + i * j,
-                location: [i, j]
+                location: [i, j],
+                buildings: buildings.defaultBuildings
             });
         }
     }

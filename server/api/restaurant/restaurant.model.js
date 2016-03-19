@@ -1,25 +1,55 @@
-'use strict';
-
 import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
-import {Schema} from 'mongoose';
+import { Schema } from 'mongoose';
 
-var RestaurantSchema = new Schema({
+const RestaurantSchema = new Schema({
   name: String,
-  location: [{type: Number}],
+  location: [{ type: Number }],
   resources: {
-
+    loyals: {
+      type: Number,
+      default: 10,
+    },
+    megabucks: {
+      type: Number,
+      default: 1000,
+    },
+    burgers: {
+      type: Number,
+      default: 0,
+    },
+    fries: {
+      type: Number,
+      default: 0,
+    },
+    drinks: {
+      type: Number,
+      default: 0,
+    },
   },
-  buildings: {
-  	headquarters: Number,
-  	seats: Number,
-  	kitchen: Number
-  },
+  buildings: [{
+    title: String,
+    level: Number
+  }],
   info: String,
   active: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
+  createdAt: {
+    type: Date,
+    default: new Date(),
+  },
+  updatedAt: {
+    type: Date,
+    default: new Date(),
+  },
 });
 
+RestaurantSchema
+  .pre('save', function(next) {
+    console.log('THIS THIS THIS THIS ');
+    this.updatedAt = new Date();
+    next();
+  });
 export default mongoose.model('Restaurant', RestaurantSchema);

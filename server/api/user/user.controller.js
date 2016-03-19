@@ -2,7 +2,6 @@
 
 import User from './user.model';
 // import passport from 'passport';
-import Restaurant from '../restaurant/restaurant.model';
 import { generateRestaurant } from '../restaurant/restaurant.controller';
 import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
@@ -117,7 +116,7 @@ export function me(req, res, next) {
             if (!user) {
                 return res.status(401).end();
             }
-            res.json(user);
+            return res.json(user);
         })
         .catch(err => next(err));
 }
