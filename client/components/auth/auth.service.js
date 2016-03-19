@@ -3,11 +3,9 @@
 (function() {
 
 function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
-// function AuthService($location, $http, $cookies, $q, Util, User) {
   var safeCb = Util.safeCb;
   var currentUser = {};
   var userRoles = appConfig.userRoles || [];
-
   if ($cookies.get('token') && $location.path() !== '/logout') {
     currentUser = User.get();
   }
@@ -149,7 +147,6 @@ function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
       if (arguments.length < 2) {
         return hasRole(currentUser.role, role);
       }
-
       return Auth.getCurrentUser(null)
         .then(user => {
           var has = (user.hasOwnProperty('role')) ?

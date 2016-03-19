@@ -1,25 +1,33 @@
-'use strict';
-
 angular.module('faster')
-  .config(function($stateProvider) {
+  .config($stateProvider => {
     $stateProvider
       .state('game', {
         url: '/game',
-        templateUrl: 'app/game/gameview.html',
-        controller: 'GameviewController',
+        templateUrl: 'app/game/game.html',
+        abstract: true,
+        authenticate: true,
+        resolve: {
+          buildingPromise: ['Building', Building => Building.getBuildings()],
+        },
+        controller: function(Building) {
+          console.log('oo');
+          this.activeRest = Building.activeRest;
+          console.log(this.activeRest);
+        },
         controllerAs: 'gv',
-        authenticate: true
       })
       .state('game.restaurant', {
-      	url: '/restaurant',
-      	templateUrl: 'app/game/restaurant.html',
-        authenticate: true
+        url: '',
+        templateUrl: 'app/game/restaurant/restaurant.html',
+        controller: 'RestaurantController',
+        controllerAs: 'gr',
+        authenticate: true,
       })
       .state('game.map', {
-      	url: '/map',
-      	templateUrl: 'app/game/map.html',
-        controller: 'GameMapController',
+        url: '/map',
+        templateUrl: 'app/game/map/map.html',
+        controller: 'MapController',
         controllerAs: 'gm',
-        authenticate: true
+        authenticate: true,
       });
   });
