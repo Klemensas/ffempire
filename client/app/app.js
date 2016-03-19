@@ -12,7 +12,7 @@ angular.module('faster', [
   'ui.bootstrap',
   // 'validation.match'
 ])
-  .config(function($urlRouterProvider, $locationProvider) {
+  .config(($urlRouterProvider, $locationProvider) => {
     $urlRouterProvider
       .otherwise('/');
 
