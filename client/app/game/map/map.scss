@@ -1,112 +1,186 @@
 $axis-color: #ffffff;
+$interaction-profile: #673AB7;
+$interaction-message: #3F51B5;
+$interaction-attack: #2196F3;
+$interaction-spy: #009688;
+$interaction-place: #4CAF50;
+$owned-restaurant: rgba(255, 193, 7, 0.4);
+
 .map-wrapper {
-    margin: 40px;
-    width: 80vh;
-    height: 80vh;
-    position: relative;
-    #map-container {
-        display: none;
+  margin: 40px;
+  width: 80vh;
+  height: 80vh;
+  position: relative;
+  #map-container {
+    width: 100%;
+    height: 100%;
+    .map-field {
+      float: left;
+      height: 100%;
+      .restaurant {
+        position: relative;
+        z-index: 1;
         width: 100%;
         height: 100%;
-        .map-field {
-            float: left;
-            .restaurant {
-                width: 100%;
-                height: 100%;
-                background: url(/assets/map/restaurant.png) no-repeat center;
-                background-size: 90%;
-            }
-            &[data-field="1"] {
-                background: url(/assets/map/grass.png) no-repeat center;
-                background-size: cover;
-            }
-            &[data-field="2"] {
-                background: url(/assets/map/grass2.png) no-repeat center;
-                background-size: cover;
-            }
-            &[data-field="3"] {
-                background: url(/assets/map/grass3.png) no-repeat center;
-                background-size: cover;
-            }
-            &[data-field="4"] {
-                background: url(/assets/map/grass4.png) no-repeat center;
-                background-size: cover;
-            }
-            &[data-field="5"] {
-                background: url(/assets/map/grass5.png) no-repeat center;
-                background-size: cover;
-            }
-            &[data-field="6"] {
-                background: url(/assets/map/grass6.png) no-repeat center;
-                background-size: cover;
-            }
-            &[data-field="7"] {
-                background: url(/assets/map/grass7.png) no-repeat center;
-                background-size: cover;
-            }
+        background-image: url(/assets/images/map/restaurant.png);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 90%;
+        &.owned {
+          background-color: $owned-restaurant;
         }
-        &.active {
-            display: block;
-        }
-    }
-    .map-nav {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        > div {
+        .restaurant-interaction {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          a {
             position: absolute;
-            font-size: 40px;
-            cursor: pointer;
-            &.up {
-                top: -50px;
-                left: 50%;
-                margin-left: -20px;
+            color: white;
+            width: 38%;
+            height: 38%;
+            text-align: center;
+            font-size: 2.5vh;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            transition: transform 0.2s linear, filter 0.2s linear;
+            filter: grayscale(70%);
+            transform: scale(0);
+            transform-origin: center;
+            &.profile {
+              background: $interaction-profile;
+              left: 11%;
+              top: 0;
             }
-            &.right {
-                top: 50%;
-                right: -35px;
-                margin-top: -20px;
+            &.message {
+              background: $interaction-message;
+              right: 11%;
+              top: 0;
             }
-            &.down {
-                bottom: -50px;
-                left: 50%;
-                margin-left: -20px;
+            &.attack {
+              background: $interaction-attack;
+              left: 31%;
+              top: 30%;
             }
-            &.left {
-                top: 50%;
-                left: -35px;
-                margin-top: -20px;
+            &.spy {
+              background: $interaction-spy;
+              left: 11%;
+              bottom: 3%;
             }
+            &.placeholder {
+              background: $interaction-place;
+              right: 11%;
+              bottom: 3%;
+            }
+          }
         }
-    }
-    .map-axies {
-        color: $axis-color;
-        .x-axis {
-            position: absolute;
-            width: 100%;
-            left: 0;
-            bottom: 0; //-20px;
-            div {
-                float: left;
+        &:hover {
+          .restaurant-interaction {
+            a {
+              transform: scale(1);
+              &:hover {
+                filter: grayscale(0%);
+                transform: scale(1.1);
+              }
             }
+          }
         }
-        .y-axis {
-            position: absolute;
-            height: 100%;
-            top: 0;
-            left: 0; //-20px;
-        }
+      }
+      &[data-field="1"] {
+        background: url(/assets/images/map/grass.png) no-repeat center;
+        background-size: cover;
+      }
+      &[data-field="2"] {
+        background: url(/assets/images/map/grass2.png) no-repeat center;
+        background-size: cover;
+      }
+      &[data-field="3"] {
+        background: url(/assets/images/map/grass3.png) no-repeat center;
+        background-size: cover;
+      }
+      &[data-field="4"] {
+        background: url(/assets/images/map/grass4.png) no-repeat center;
+        background-size: cover;
+      }
+      &[data-field="5"] {
+        background: url(/assets/images/map/grass5.png) no-repeat center;
+        background-size: cover;
+      }
+      &[data-field="6"] {
+        background: url(/assets/images/map/grass6.png) no-repeat center;
+        background-size: cover;
+      }
+      &[data-field="7"] {
+        background: url(/assets/images/map/grass7.png) no-repeat center;
+        background-size: cover;
+      }
     }
-    &[data-column-size="7"] .map-field,
-    &[data-column-size="7"] .y-axis > div,
-    &[data-column-size="7"] .x-axis > div {
-        height: 1 / 7 * 100%;
+    &.active {
+      display: block;
     }
-    &[data-row-size="7"] .map-field,
-    &[data-row-size="7"] .x-axis > div,
-    &[data-row-size="7"] .y-axis > div {
-        width: 1 / 7 * 100%;
+  }
+  .map-nav {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    > div {
+      position: absolute;
+      font-size: 40px;
+      cursor: pointer;
+      &.up {
+        top: -50px;
+        left: 50%;
+        margin-left: -20px;
+      }
+      &.right {
+        top: 50%;
+        right: -35px;
+        margin-top: -20px;
+      }
+      &.down {
+        bottom: -50px;
+        left: 50%;
+        margin-left: -20px;
+      }
+      &.left {
+        top: 50%;
+        left: -35px;
+        margin-top: -20px;
+      }
     }
+  }
+  .map-axies {
+    color: $axis-color;
+    .x-axis {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 0; //-20px;
+      div {
+        float: left;
+      }
+    }
+    .y-axis {
+      position: absolute;
+      height: 100%;
+      top: 0;
+      left: 0; //-20px;
+    }
+  }
+  &[data-column-size="7"] .map-row,
+  &[data-column-size="7"] .y-axis > div,
+  &[data-column-size="7"] .x-axis > div {
+    height: 1 / 7 * 100%;
+  }
+  &[data-row-size="7"] .map-field,
+  &[data-row-size="7"] .x-axis > div,
+  &[data-row-size="7"] .y-axis > div {
+    width: 1 / 7 * 100%;
+  }
 }
