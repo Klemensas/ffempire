@@ -29,12 +29,17 @@ const RestaurantSchema = new Schema({
   },
   buildings: [{
     title: String,
-    level: Number
+    level: Number,
   }],
   info: String,
   active: {
     type: Boolean,
     default: true,
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null,
   },
   createdAt: {
     type: Date,
@@ -48,7 +53,6 @@ const RestaurantSchema = new Schema({
 
 RestaurantSchema
   .pre('save', function(next) {
-    console.log('THIS THIS THIS THIS ');
     this.updatedAt = new Date();
     next();
   });

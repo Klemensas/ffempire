@@ -71,8 +71,10 @@ export function restaurantView(req, res) {
 }
 
 export function map(req, res) {
-  Restaurant.find({}, 'location')
-  .then(respondWithResult(res))
+  Restaurant.find({}, 'location owner').populate('owner', 'name')
+  .then(result => {
+    res.status(200).json(result);
+  })
     .catch(handleError(res));
 }
 
@@ -164,6 +166,7 @@ export function generateRestaurant(user) {
         location,
         name: `${user.name}'s restaurant`,
         buildings: buildings.defaultBuildings,
+        owner: user,
       });
     });
 }
