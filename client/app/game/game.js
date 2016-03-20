@@ -10,9 +10,7 @@ angular.module('faster')
           buildingPromise: ['Building', Building => Building.getBuildings()],
         },
         controller: function(Building) {
-          console.log('oo');
           this.activeRest = Building.activeRest;
-          console.log(this.activeRest);
         },
         controllerAs: 'gv',
       })
@@ -29,5 +27,8 @@ angular.module('faster')
         controller: 'MapController',
         controllerAs: 'gm',
         authenticate: true,
+        resolve: {
+          mapRestaurantPromise: ['Building', Building => Building.getMapRestaurants()],
+        },
       });
   });
