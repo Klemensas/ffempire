@@ -5,6 +5,7 @@
 
 'use strict';
 // import Thing from '../api/thing/thing.model';
+import Message from '../api/message/message.model';
 import User from '../api/user/user.model';
 import Restaurant from '../api/restaurant/restaurant.model';
 import buildings from './game/buildings';
@@ -45,6 +46,14 @@ const users = [{
     restaurants: null,
   },
 }];
+
+const messages = [{
+  owner: 'Init',
+  content: 'Hello. Nice to see you here.',
+}];
+Message.find({}).remove().then(() => {
+  messages.forEach(m => Message.create(m));
+});
 
 let savedRestaurants = [];
 

@@ -15,19 +15,21 @@ const validateJwt = expressJwt({
  * Attaches the user object to the request if authenticated
  * Otherwise returns 403
  */
+function validate(req, res, next) {
+  // allow access_token to be passed through query parameter as well
+  if (req.query && req.query.hasOwnProperty('access_token')) {
+    req.headers.authorization = 'Bearer ' + req.query.access_token;
+  }
+  validateJwt(req, res, next);
+}
+
 export function isAuthenticated() {
   return compose()
     // Validate jwt
-    .use((req, res, next) => {
-      // allow access_token to be passed through query parameter as well
-      if (req.query && req.query.hasOwnProperty('access_token')) {
-        req.headers.authorization = 'Bearer ' + req.query.access_token;
-      }
-      validateJwt(req, res, next);
-    })
+    .use(validate)
     // Attach user to request
     .use((req, res, next) => {
-      return User.findById(req.user._id)
+      User.findById(req.user._id)
         .then(user => {
           if (!user) {
             return res.status(401).end();
@@ -36,6 +38,35 @@ export function isAuthenticated() {
           next();
         })
         .catch(err => next(err));
+    });
+}
+
+export function userIfLoggedIn() {
+  return compose()
+    .use((req, res, next) => {
+      if (req.query && req.query.hasOwnProperty('access_token')) {
+        req.headers.authorization = 'Bearer ' + req.query.access_token;
+      }
+      if (typeof req.headers.authorization !== 'undefined') {
+        validateJwt(req, res, next);
+      } else {
+        next();
+      }
+    })
+    .use((req, res, next) => {
+      if (typeof req.user !== 'undefined') {
+        User.findById(req.user._id)
+          .then(user => {
+            if (!user) {
+              return res.status(401).end();
+            }
+            req.user = user;
+            next();
+          })
+          .catch(err => next(err));
+      } else {
+        next();
+      }
     });
 }
 
@@ -51,7 +82,7 @@ export function hasRole(roleRequired) {
     .use(isAuthenticated())
     .use(function meetsRequirements(req, res, next) {
       if (config.userRoles.indexOf(req.user.role) >=
-          config.userRoles.indexOf(roleRequired)) {
+        config.userRoles.indexOf(roleRequired)) {
         next();
       } else {
         res.status(403).send('Forbidden');

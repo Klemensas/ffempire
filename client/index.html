@@ -29,6 +29,7 @@
     <!-- Add your site or application content here -->
     <navbar></navbar>
     <div ui-view=""></div>
+    <div class="overlay chat {{chat.windowActive ? 'active' : ''}}" ng-controller="MessageController as chat" ng-include="'app/message/message.html'"></div>
     <footer></footer>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -76,6 +77,8 @@
       <script src="app/game/restaurant/restaurant.controller.js"></script>
       <script src="app/main/main.controller.js"></script>
       <script src="app/main/main.js"></script>
+      <script src="app/message/message.controller.js"></script>
+      <script src="app/message/message.service.js"></script>
       <script src="components/auth/auth.service.js"></script>
       <script src="components/auth/interceptor.service.js"></script>
       <script src="components/auth/router.decorator.js"></script>
