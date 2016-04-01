@@ -1,9 +1,10 @@
 (function() {
   function Building($http, Auth) {
     const user = Auth.getCurrentUser();
-    const costs = {};
     const fieldTypes = 7;
     const requirements = {};
+    const costs = {};
+    const details = {};
     const activeRestId = null;
     const activeRest = null;
     const resourceNames = ['megabucks', 'loyals', 'burgers', 'fries', 'drinks'];
@@ -31,10 +32,10 @@
       return $http.get(`/api/restaurant/${id}/buildings/`)
         .then(res => {
           this.activeRestId = id;
-          costs[id] = res.data.costs;
-          requirements[id] = res.data.requirements;
+          this.costs = res.data.costs;
+          this.requirements = res.data.requirements;
           this.activeRest = populateBuildings(rest, res.data);
-          console.log(this.activeRest);
+          this.details = res.data.details;
           return this;
         })
         .catch(err => {
@@ -47,6 +48,7 @@
       if (this.mapRestaurantLocs.length !== 0) {
         return this.mapRestaurants;
       }
+      console.time('Restaurant list start')
       return $http.get('/api/restaurant/map').then(response => {
         this.mapRestaurants = {};
         response.data.map(el => {
@@ -55,17 +57,17 @@
           };
         });
         this.mapRestaurantLocs = Object.keys(this.mapRestaurants);
+        console.timeEnd('Restaurant list start')
         return this.mapRestaurants;
       });
     }
 
     function upgradeAttempt(building = {}) {
-      console.log('post data');
       return $http.post(`/api/restaurant/${this.activeRestId}/buildings/upgrade`, { building: building.title })
         .then(res => {
           this.activeRest = populateBuildings(res.data, {
-            costs: this.costs[this.activeRestId],
-            requirements: this.requirements[this.activeRestId],
+            costs: this.costs,
+            requirements: this.requirements,
           });
           return this.activeRest;
         })
@@ -76,16 +78,30 @@
     }
 
     function buildingCosts(building, level) {
-      if (typeof this.costs[this.activeRestId][building] !== 'undefined') {
+      if (typeof this.costs[building] !== 'undefined') {
         return typeof level === 'number' ?
-          this.costs[this.activeRestId][building][level] :
-          this.costs[this.activeRestId][building];
+          this.costs[building][level] :
+          this.costs[building];
       }
       return false;
     }
 
     function canBuy(building) {
       return resourceNames.every(r => building.costs[r] <= this.activeRest.resources[r]);
+    }
+
+    function meetsRequirements(building) {
+      const reqs = this.requirements[building.title];
+      if (!reqs) {
+        return true;
+      }
+      const reqKeys = Object.keys(reqs);
+      return this.activeRest.buildings.every(b => {
+        if (reqKeys.indexOf(b.title) > -1 && reqs[b.title] > b.level) {
+          return false;
+        }
+        return true;
+      });
     }
 
     function displayedRestaurants(location, size) {
@@ -110,19 +126,16 @@
       return map;
     }
 
-    function mapData(map) {
-
-    }
-
     return {
       activeRest,
       buildingCosts,
       canBuy,
       costs,
+      details,
       displayedRestaurants,
-      mapData,
       mapRestaurants,
       mapRestaurantLocs,
+      meetsRequirements,
       requirements,
       getBuildings,
       getMapRestaurants,

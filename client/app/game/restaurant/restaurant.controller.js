@@ -4,6 +4,7 @@
       this.scope = $scope;
       this.Building = Building;
       this.user = Auth.getCurrentUser();
+      this.details = Building.details;
     }
 
     upgrade(building) {
@@ -15,8 +16,21 @@
         });
     }
 
+    upgradeable(building) {
+      if (building.costs) {
+        return true;
+      }
+      return false;
+    }
+
     canAfford(building) {
       return this.Building.canBuy(building);
+    }
+
+    meetsRequirements(building) {
+      // console.log(building, this.Building.requirements);
+      // return true;
+      return this.Building.meetsRequirements(building);
     }
   }
   angular.module('faster')
