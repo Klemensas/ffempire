@@ -1,0 +1,16 @@
+<div class="chat-button" ng-click="chat.toggleChat()"><i class="fa fa-comments-o"></i></div>
+<div class="chat-window">
+  <div class="close-button" ng-click="chat.toggleChat()"><i class="fa fa-times"></i></div>
+  <div class="messages">
+    <div class="message" ng-repeat="message in chat.messages track by $index">
+      <span class="owner {{!message.owner ? 'anon' : ''}}">{{message.owner || 'Anonymous'}}</span>
+      <span class="content">{{message.content}}</span>
+    </div>
+  </div>
+  <div class="chat-post-form">
+    <form class="form" name="form" ng-submit="chat.postMessage(form)" novalidate>
+      <input type="text" name="content" class="chat-input" ng-model="chat.chatMessage.content" ng-minlength="10" ng-maxlength="200" required=""></input>
+      <button class="btn chat-post-button" type="submit">Post</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+$chat-background: #fefefe;
+$chat-color: #0d0d0d;
+$close-button: #C62828;
+$anon-color: #aeaeae;
+
+.overlay.chat {
+  position: fixed;
+  bottom: 5%;
+  left: 3%;
+  .chat-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 5vh;
+    height: 5vh;
+    font-size: 3vh;
+    opacity: 0.6;
+    color: $chat-color;
+    background-color: $chat-background;
+    border: 1px solid $chat-color;
+    box-shadow: -1px 1px 0 0 rgba(0,0,0,0.75);
+    transition: 0.2s linear;
+    &:hover {
+      opacity: 1;
+      cursor: pointer;
+    }
+  }
+  .chat-window {
+    position: absolute;
+    background: $chat-background;
+    border: 1px solid $chat-color;
+    bottom: -1px;
+    left: -1px;
+    width: 25vw;
+    height: 50vh;
+    transform: scale(0);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    transform-origin: bottom left;
+    .messages {
+      height: 88%;
+      width: 100%;
+      padding: 1vh;
+      overflow: auto;
+      .message {
+        padding: 2px 0;
+        .owner {
+          font-weight: 700;
+          padding-right: 2px;
+          &.anon {
+            font-style: italic;
+            color: $anon-color;
+          }
+        }
+      }
+    }
+    .chat-post-form {
+      height: 12%;
+      width: 100%;
+      position: relative;
+      .chat-input {
+        position: absolute;
+        width: 75%;
+        height: 100%;
+        left: 0;
+        top: 0;
+      }
+      .chat-post-button {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 25%;
+        height: 100%;
+      }
+    }
+    .close-button {
+      position: absolute;
+      right: 1vh;
+      top: 0;
+      font-size: 2.5vh;
+      cursor: pointer;
+      color: $close-button;
+    }
+  }
+  &.active .chat-window {
+    transform: scale(1);
+  }
+}
