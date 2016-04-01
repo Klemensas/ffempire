@@ -112,11 +112,12 @@ export function getBuildings(req, res) {
      // TODO: error, non user restaurant
     return res.status(404).end();
   }
-  const costsAndReqs = {
+  const buildingData = {
     costs: buildings.costsNamed,
-    requirements: buildings.requirementsNamed,
+    requirements: buildings.requirements,
+    details: buildings.details,
   };
-  return res.json(costsAndReqs);
+  return res.json(buildingData);
 }
 
 // Post, attempt to upgrade a building
