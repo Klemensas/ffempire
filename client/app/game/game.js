@@ -9,9 +9,7 @@ angular.module('faster')
         resolve: {
           buildingPromise: ['Building', Building => Building.getBuildings()],
         },
-        controller: function(Building) {
-          this.activeRest = Building.activeRest;
-        },
+        controller: 'GameViewController',
         controllerAs: 'gv',
       })
       .state('game.restaurant', {
