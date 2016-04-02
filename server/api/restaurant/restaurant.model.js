@@ -2,6 +2,14 @@ import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 import { Schema } from 'mongoose';
 
+export const tempBaseProduction = {
+  burgers: 5,
+  drinks: 5,
+  fries: 5,
+  loyals: 1,
+  megabucks: 0,
+};
+
 const RestaurantSchema = new Schema({
   name: String,
   location: [{ type: Number }],
@@ -53,7 +61,18 @@ const RestaurantSchema = new Schema({
 
 RestaurantSchema
   .pre('save', function(next) {
+    updateRes(this);
     this.updatedAt = new Date();
     next();
   });
+
+function updateRes(rest) {
+  const lastTime = (Date.now() - rest.updatedAt) / (1000 * 60 * 60);
+  const resKeys = Object.keys(tempBaseProduction);
+  rest.resources = resKeys.map(r => {
+    return rest.resources[r] += tempBaseProduction[r] * lastTime;
+  });
+  return rest;
+}
+
 export default mongoose.model('Restaurant', RestaurantSchema);
