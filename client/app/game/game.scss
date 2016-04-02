@@ -21,3 +21,40 @@
     }
   }
 }
+
+.resource {
+  line-height: 28px;
+  display: inline-block;
+  text-align: center;
+  .res {
+    min-height: 28px;
+    min-width: 28px;
+    font-size: 28px;
+    line-height: 28px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &.res-burgers {
+      background-image: url(/assets/images/cheeseburger.svg);
+    }
+    &.res-fries {
+      background-image: url(/assets/images/fries.svg);
+    }
+    &.res-drinks {
+      background-image: url(/assets/images/soda.svg);
+    }
+  }
+  &.res-small {
+    line-height: 20px;
+    .res {
+      min-height: 20px;
+      min-width: 20px;
+      font-size: 20px;
+      line-height: 20px;
+    }
+    margin-right: 5px;
+  }
+}
