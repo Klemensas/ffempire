@@ -10,6 +10,15 @@
     const resourceNames = ['megabucks', 'loyals', 'burgers', 'fries', 'drinks'];
     const mapRestaurants = {};
     const mapRestaurantLocs = [];
+    let modifiedRes = {};
+
+    const production = {
+      megabucks: 0,
+      loyals: 1,
+      burgers: 5,
+      drinks: 5,
+      fries: 5,
+    };
 
     function populateBuildings(restaurant, data) {
       const buildings = restaurant.buildings.map(b => {
@@ -42,6 +51,14 @@
           console.error(err);
           throw 'Server error';
         });
+    }
+
+    function modifyRes() {
+      const timeDiff = (Date.now() - new Date(this.activeRest.updatedAt)) / (1000 * 60 * 60);
+      resourceNames.forEach(r => {
+        modifiedRes[r] = Math.floor(this.activeRest.resources[r] + production[r] * timeDiff);
+      });
+      return modifiedRes;
     }
 
     function getMapRestaurants() {
@@ -136,6 +153,8 @@
       mapRestaurants,
       mapRestaurantLocs,
       meetsRequirements,
+      modifyRes,
+      production,
       requirements,
       getBuildings,
       getMapRestaurants,
