@@ -1,36 +1,31 @@
-<!-- <div class="top-part clearfix row">
-  <div class="col-sm-6 nav">
-    <div><a ui-sref="game.restaurant" ui-sref-active="active">restaurant</a></div>
-    <div><a ui-sref="game.map" ui-sref-active="active">map</a></div>
-  </div>
-  <div class="col-sm-6 row">
-    <div class="col-sm-2">Resources:</div>
-    <div class="col-sm-2">M {{gr.activeRest.resources.megabucks}}</div>
-    <div class="col-sm-2">B {{gr.activeRest.resources.burgers}}</div>
-    <div class="col-sm-2">F {{gr.activeRest.resources.fries}}</div>
-    <div class="col-sm-2">D {{gr.activeRest.resources.drinks}}</div>
-    <div class="col-sm-2">L {{gr .activeRest.resources.loyals}}</div>
-  </div>
-</div> -->
-
-<div class="building-list">
-  <div class="building row" ng-repeat="building in gv.activeRest.buildings" ng-if="gr.meetsRequirements(building)">
-    <div class="col-sm-7">
-      <span class="building-detail-collapse" ng-click="building.details.active = !building.details.active"><i class="fa fa-chevron-down"></i></span>
-      <span class="building-title">{{building.title}}</span>
-      <span class="building-level">{{building.level}}</span>
+<div class="row">
+  <div class="col-sm-12">
+    <button ng-if="gr.canTrain()" ng-click="gr.trainingActive = !gr.trainingActive" class="btn btn-primary">Train workers</button>
+    <div uib-collapse="!gr.trainingActive" class="margin-top-two">
+      <div class="col-sm-6 well well-lg">
+        
+      </div>
     </div>
-    <div ng-if="gr.upgradeable(building)" ng-switch="gr.canAfford(building)" class="col-sm-5 text-right">
-      <span class="resource res-small"><i class="res fa fa-money"></i> {{building.costs.megabucks}}</span>
-      <span class="resource res-small"><i class="res fa fa-users"></i> {{building.costs.loyals}}</span>
-      <span class="resource res-small"><i class="res res-burgers"></i> {{building.costs.burgers}}</span>
-      <span class="resource res-small"><i class="res res-fries"></i> {{building.costs.fries}}</span>
-      <span class="resource res-small"><i class="res res-drinks"></i> {{building.costs.drinks}}</span>
-      <span ng-switch-when="true" class="btn btn-xs building-upgrade btn-primary" ng-click="gr.upgrade(building)">Upgrade</span>
-      <span ng-switch-when="false">Can't afford</span>
-    </div>
-    <div uib-collapse="!building.details.active" class="col-sm-12 margin-top">
-      <div class="well well-lg">{{gr.details[building.title]}}</div>
+  </div>
+  <div class="col-sm-12 building-list">
+    <div class="building row" ng-repeat="building in gr.buildings" ng-if="gr.meetsRequirements(building)">
+      <div class="col-sm-7">
+        <span class="building-detail-collapse" ng-click="building.details.active = !building.details.active"><i class="fa fa-chevron-down"></i></span>
+        <span class="building-title">{{building.title}}</span>
+        <span class="building-level">{{building.level}}</span>
+      </div>
+      <div ng-if="gr.upgradeable(building)" ng-switch="gr.canAfford(building)" class="col-sm-5 text-right">
+        <span class="resource res-small"><i class="res fa fa-money"></i> {{building.costs.megabucks}}</span>
+        <span class="resource res-small"><i class="res fa fa-users"></i> {{building.costs.loyals}}</span>
+        <span class="resource res-small"><i class="res res-burgers"></i> {{building.costs.burgers}}</span>
+        <span class="resource res-small"><i class="res res-fries"></i> {{building.costs.fries}}</span>
+        <span class="resource res-small"><i class="res res-drinks"></i> {{building.costs.drinks}}</span>
+        <span ng-switch-when="true" class="btn btn-xs building-upgrade btn-primary" ng-click="gr.upgrade(building)">Upgrade</span>
+        <span ng-switch-when="false">Can't afford</span>
+      </div>
+      <div uib-collapse="!building.details.active" class="col-sm-12 margin-top-two">
+        <div class="well well-lg">{{gr.details[building.title]}}</div>
+      </div>
     </div>
   </div>
 </div>

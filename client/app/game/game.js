@@ -26,7 +26,7 @@ angular.module('faster')
         controllerAs: 'gm',
         authenticate: true,
         resolve: {
-          mapRestaurantPromise: ['Building', Building => Building.getMapRestaurants()],
+          mapRestaurantPromise: ['Restaurant', Restaurant => Restaurant.getMapRestaurants()],
         },
       });
   });

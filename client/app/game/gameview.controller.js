@@ -1,12 +1,12 @@
 (function () {
   class GameViewController {
-    constructor(Building, $interval) {
-      this.activeRest = Building.activeRest;
-      this.resources = Building.modifyRes();
-      this.production = Building.production;
+    constructor(Restaurant, $interval) {
+      this.activeRest = Restaurant.activeRest;
+      this.resources = Restaurant.modifyRes();
+      this.production = Restaurant.production;
 
       $interval(() => {
-        this.resources = Building.modifyRes();
+        this.resources = Restaurant.modifyRes();
       }, 10000);
     }
   }

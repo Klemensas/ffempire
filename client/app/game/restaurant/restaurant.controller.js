@@ -1,19 +1,25 @@
 (function () {
   class RestaurantController {
-    constructor($http, $scope, Auth, Building) {
-      this.scope = $scope;
-      this.Building = Building;
+    constructor($http, $scope, Auth, Restaurant, Building) {
       this.user = Auth.getCurrentUser();
+      this.scope = $scope;
+      this.buildings = Restaurant.activeRest.buildings;
       this.details = Building.details;
+
+      this.Restaurant = Restaurant;
+      this.Building = Building;
     }
 
     upgrade(building) {
-      // Should canAfford be ran again?
-      console.log(this.Building);
       this.Building.upgradeAttempt(building)
         .then(r => {
-          this.scope.gv.activeRest = r;
+          this.buildings = this.Restaurant.activeRest.buildings;
+          this.scope.gv.resources = this.Restaurant.modifyRes();
         });
+    }
+
+    canTrain() {
+      return this.Restaurant.activeRest.buildings.some(b => b.title === 'training' && b.level);
     }
 
     upgradeable(building) {
@@ -22,14 +28,11 @@
       }
       return false;
     }
-
     canAfford(building) {
       return this.Building.canBuy(building);
     }
 
     meetsRequirements(building) {
-      // console.log(building, this.Building.requirements);
-      // return true;
       return this.Building.meetsRequirements(building);
     }
   }
