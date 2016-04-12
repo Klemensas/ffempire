@@ -48,28 +48,23 @@
       return false;
     }
 
-    function canBuy(building) {
-      const res = Restaurant.modifyRes();
-      return Restaurant.resourceNames.every(r => building.costs[r] <= res[r]);
-    }
-
-    function meetsRequirements(building) {
-      const reqs = this.requirements[building.title];
-      if (!reqs) {
+    function meetsRequirements(reqs) {
+      const requires = typeof reqs === 'string' ? this.requirements[reqs] : reqs;
+      if (!requires) {
         return true;
       }
-      const reqKeys = Object.keys(reqs);
+      const reqKeys = Object.keys(requires);
       return Restaurant.activeRest.buildings.every(b => {
-        if (reqKeys.indexOf(b.title) > -1 && reqs[b.title] > b.level) {
+        if (reqKeys.indexOf(b.title) > -1 && requires[b.title] > b.level) {
           return false;
         }
         return true;
       });
     }
 
+
     return {
       buildingCosts,
-      canBuy,
       costs,
       details,
       meetsRequirements,
@@ -82,3 +77,4 @@
   angular.module('faster')
     .factory('Building', Building);
 }());
+

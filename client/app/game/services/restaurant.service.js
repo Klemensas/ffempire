@@ -3,6 +3,10 @@
     const user = Auth.getCurrentUser();
     let activeRest;
     let activeRestId;
+    let workers = {
+      kitchen: {},
+      outside: {},
+    };
     const mapRestaurants = {};
     const mapRestaurantLocs = [];
     const production = {
@@ -42,7 +46,14 @@
       }
       activeRest = rest;
       activeRestId = id;
+      mapWorkers(activeRest.workers);
       return rest;
+    }
+
+    function mapWorkers(workerArray) {
+      workerArray.kitchen.map(w => {
+        workers.kitchen[w.title] = w.count;
+      });
     }
 
     function displayedRestaurants(location, size) {
@@ -69,8 +80,8 @@
 
     function modifyRes() {
       // TODO: stop this from running a lot more than it should
-      console.log('I\'m an asshole so It run multiple times for no reason!');
-      const timeDiff = (Date.now() - new Date(activeRest.updatedAt)) / (1000 * 60 * 60);
+      // console.log('I\'m an asshole so It run multiple times for no reason!', this, activeRest);
+      const timeDiff = (Date.now() - new Date(this.activeRest.updatedAt)) / (1000 * 60 * 60);
       const res = {};
       resourceNames.forEach(r => {
         res[r] = Math.floor(this.activeRest.resources[r] + production[r] * timeDiff);
@@ -80,6 +91,13 @@
 
     function updateRest(data) {
       this.activeRest = data;
+      mapWorkers(this.activeRest.workers);
+      console.log(this, activeRest);
+    }
+
+    function canAfford(costs) {
+      const res = this.modifyRes();
+      return resourceNames.every(r => costs[r] <= res[r]);
     }
 
     setActiveRest();
@@ -87,6 +105,7 @@
     return {
       activeRest,
       activeRestId,
+      canAfford,
       displayedRestaurants,
       getMapRestaurants,
       mapRestaurants,
@@ -96,9 +115,11 @@
       resourceNames,
       setActiveRest,
       updateRest,
+      workers,
     };
   }
 
   angular.module('faster')
     .factory('Restaurant', Restaurant);
 }());
+

@@ -1,13 +1,25 @@
 (function () {
   class RestaurantController {
-    constructor($http, $scope, Auth, Restaurant, Building) {
+    constructor($http, $scope, Auth, Restaurant, Building, Worker) {
       this.user = Auth.getCurrentUser();
       this.scope = $scope;
+
       this.buildings = Restaurant.activeRest.buildings;
+      this.restaurantWorkers = Restaurant.workers;
       this.details = Building.details;
+
+      this.kitchenWorkerData = {};
+      this.outsideWorkerData = {};
 
       this.Restaurant = Restaurant;
       this.Building = Building;
+      this.Worker = Worker;
+
+      this.Worker.getWorkerData()
+        .then((workers) => {
+          this.kitchenWorkerData = workers.kitchenWorkers;
+          this.outsideWorkerData = workers.outsideWorkers;
+        });
     }
 
     upgrade(building) {
@@ -18,8 +30,21 @@
         });
     }
 
-    canTrain() {
-      return this.Restaurant.activeRest.buildings.some(b => b.title === 'training' && b.level);
+    canTrainAny() {
+      return this.Worker.canTrainAny();
+    }
+
+    canTrain(requirements) {
+      return this.Worker.canTrain(requirements);
+    }
+
+    hireWorker(worker) {
+      //! TODO:  add ability to hire more than one worker
+      this.Worker.hireAttempt(worker)
+        .then(r => {
+          this.restaurantWorkers = this.Restaurant.workers;
+          this.scope.gv.resources = this.Restaurant.modifyRes();
+        });
     }
 
     upgradeable(building) {
@@ -29,13 +54,14 @@
       return false;
     }
     canAfford(building) {
-      return this.Building.canBuy(building);
+      return this.Restaurant.canAfford(building.costs);
     }
 
     meetsRequirements(building) {
-      return this.Building.meetsRequirements(building);
+      return this.Building.meetsRequirements(building.title);
     }
   }
   angular.module('faster')
     .controller('RestaurantController', RestaurantController);
 }());
+
