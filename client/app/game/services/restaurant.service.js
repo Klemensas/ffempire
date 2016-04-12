@@ -86,6 +86,7 @@
       resourceNames.forEach(r => {
         res[r] = Math.floor(this.activeRest.resources[r] + production[r] * timeDiff);
       });
+      console.log(res);
       return res;
     }
 
@@ -96,6 +97,7 @@
     }
 
     function canAfford(costs) {
+      console.log(costs);
       const res = this.modifyRes();
       return resourceNames.every(r => costs[r] <= res[r]);
     }

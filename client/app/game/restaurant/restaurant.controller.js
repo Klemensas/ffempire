@@ -53,8 +53,8 @@
       }
       return false;
     }
-    canAfford(building) {
-      return this.Restaurant.canAfford(building.costs);
+    canAfford(target) {
+      return this.Restaurant.canAfford(target.costs);
     }
 
     meetsRequirements(building) {

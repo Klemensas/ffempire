@@ -2,6 +2,7 @@ const kitchenWorkers = [{
   title: 'burger flipper',
   costs: {
     megabucks: 10,
+    burgers: 0,
     fries: 0,
     drinks: 0,
     loyals: 0,
@@ -46,9 +47,7 @@ const kitchenWorkers = [{
     kitchen: 5,
   },
 }];
-const outsideWorkers = {
-
-};
+const outsideWorkers = [];
 
 export default {
   kitchenWorkers,
