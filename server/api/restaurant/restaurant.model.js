@@ -39,6 +39,16 @@ const RestaurantSchema = new Schema({
     title: String,
     level: Number,
   }],
+  workers: {
+    kitchen: [{
+      title: String,
+      count: Number,
+    }],
+    outside: [{
+      title: String,
+      count: Number,
+    }],
+  },
   info: String,
   active: {
     type: Boolean,
@@ -60,7 +70,7 @@ const RestaurantSchema = new Schema({
 });
 
 RestaurantSchema
-  .pre('save', function(next) {
+  .pre('save', function (next) {
     updateRes(this);
     this.updatedAt = new Date();
     next();
@@ -76,3 +86,4 @@ function updateRes(rest) {
 }
 
 export default mongoose.model('Restaurant', RestaurantSchema);
+
