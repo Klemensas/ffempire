@@ -105,13 +105,8 @@ export function destroy(req, res) {
     .catch(handleError(res));
 }
 
-// Get current building costs and stats for a specific restaurant
+// Get building costs and stats
 export function getBuildings(req, res) {
-  const restaurant = isOwner(req.user, req.params.id);
-  if (restaurant === -1) {
-     // TODO: error, non user restaurant
-    return res.status(404).end();
-  }
   const buildingData = {
     costs: buildings.costsNamed,
     requirements: buildings.requirements,

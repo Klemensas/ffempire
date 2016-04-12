@@ -11,7 +11,7 @@ router.get('/', controller.index);
 // router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 // router.get('/', auth.isAuthenticated(), controller.restaurantView);
 router.get('/map', auth.isAuthenticated(), controller.map);
-router.get('/:id/buildings', auth.isAuthenticated(), controller.getBuildings);
+router.get('/buildings', auth.isAuthenticated(), controller.getBuildings);
 router.post('/:id/buildings/upgrade', auth.isAuthenticated(), controller.upgradeBuilding);
 // router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 // router.get('/:id', auth.isAuthenticated(), controller.show);

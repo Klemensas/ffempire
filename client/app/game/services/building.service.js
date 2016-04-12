@@ -11,7 +11,7 @@
     }
 
     function getBuildings() {
-      return $http.get(`/api/restaurant/${Restaurant.activeRestId}/buildings/`)
+      return $http.get('/api/restaurant/buildings/')
         .then(res => {
           this.costs = res.data.costs;
           this.requirements = res.data.requirements;
@@ -31,7 +31,7 @@
         .then(res => {
           Restaurant.updateRest(res.data);
           findCurrentCosts(this.costs);
-          return this.activeRest;
+          return Restaurant.activeRest;
         })
         .catch(err => {
           console.error(err);
