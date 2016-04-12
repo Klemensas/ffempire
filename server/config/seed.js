@@ -21,6 +21,21 @@ for (let i = 1; i < 100; i++) {
         name: `Restaurant #${i * j}`,
         location: [i, j],
         buildings: buildings.defaultBuildings,
+        workers: {
+          kitchen: [{
+            title: 'burger flipper',
+            count: 0,
+          }, {
+            title: 'fry fryer',
+            count: 0,
+          }, {
+            title: 'drink pourer',
+            count: 0,
+          }, {
+            title: 'server',
+            count: 0,
+          }, ],
+        },
       });
     }
   }
@@ -93,3 +108,4 @@ User.find({}).remove().then(() => {
     });
   return true;
 });
+

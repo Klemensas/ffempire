@@ -41,6 +41,8 @@ const costs = {
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0],
+    [100, 1, 1, 0, 0],
+    [50, 1, 1, 1, 1],
   ],
   chairs: [
     [10, 0, 0, 0, 0],
@@ -128,3 +130,4 @@ export default {
   levelCostsNamed,
   costsNamed: toObject(costs, resources),
 };
+
