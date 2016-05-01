@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 import { Schema } from 'mongoose';
+import { resAffectedBy } from '../../config/game/workers';
+import _ from 'lodash';
 
 export const tempBaseProduction = {
   burgers: 5,
@@ -9,6 +11,9 @@ export const tempBaseProduction = {
   loyals: 1,
   megabucks: 0,
 };
+
+const bucksPerFood = 0.5;
+const workerProduction = 1;
 
 const RestaurantSchema = new Schema({
   name: String,
@@ -34,6 +39,10 @@ const RestaurantSchema = new Schema({
       type: Number,
       default: 0,
     },
+  },
+  moneyPercent: {
+    type: Number,
+    default: 20,
   },
   buildings: [{
     title: String,
@@ -69,21 +78,34 @@ const RestaurantSchema = new Schema({
   },
 });
 
-RestaurantSchema
-  .pre('save', function (next) {
-    updateRes(this);
-    this.updatedAt = new Date();
-    next();
-  });
-
 function updateRes(rest) {
   const lastTime = (Date.now() - rest.updatedAt) / (1000 * 60 * 60);
   const resKeys = Object.keys(tempBaseProduction);
-  rest.resources = resKeys.map(r => {
-    return rest.resources[r] += tempBaseProduction[r] * lastTime;
+  rest.updatedAt = new Date();
+  let megabucks = 0;
+  resKeys.forEach(r => {
+    const wi = _.findKey(rest.workers.kitchen, { title: resAffectedBy[r] });
+    const workerCount = wi ? rest.workers.kitchen[wi].count : 0;
+    const modifier = r === 'loyals' ? 1 : (100 - rest.moneyPercent) / 100;
+    const unmodified = (tempBaseProduction[r] + workerCount * workerProduction) * lastTime;
+    const modified = unmodified * modifier;
+    if (r !== 'loyals') {
+      megabucks += (unmodified - modified) * bucksPerFood;
+    }
+    rest.resources[r] += modified;
   });
+  rest.resources.megabucks += megabucks;
   return rest;
 }
 
-export default mongoose.model('Restaurant', RestaurantSchema);
+RestaurantSchema
+  .pre('save', function (next) {
+    if (new Date() - this.updatedAt > 1000) {
+      updateRes(this);
+    }
+    next();
+  });
 
+export const Restaurant = mongoose.model('Restaurant', RestaurantSchema);
+export { updateRes };
+export default mongoose.model('Restaurant', RestaurantSchema);

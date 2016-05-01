@@ -1,6 +1,10 @@
 <div class="row">
  <div class="col-sm-12">
   <button ng-if="gr.canTrainAny()" ng-click="gr.trainingActive = !gr.trainingActive" class="btn btn-primary">Train workers</button>
+  <div ng-if="gr.canControlMoney()" class="pull-right inline-flex">
+    <input class="inline-range" type="range" id="soldPercent" min="0" max="100" value="{{gr.prodSold}}" ng-model="gr.prodSold" ng-change="gr.prodSoldChange(gr.prodSold)">
+    <span> {{gr.prodSold}}% of your produced food is sold</span>
+  </div>
   <div uib-collapse="!gr.trainingActive" class="margin-top-two">
    <div class="col-sm-12 well well-lg">
     <div ng-repeat="worker in gr.kitchenWorkerData" ng-if="gr.canTrain(worker.requires)" class="row worker-data" ng-switch="gr.canAfford(worker)">

@@ -48,9 +48,17 @@ const kitchenWorkers = [{
   },
 }];
 const outsideWorkers = [];
+const resAffectedBy = {
+  burgers: 'burger flipper',
+  fries: 'fry fryer',
+  drinks: 'drink pourer',
+  loyals: 'server',
+};
 
+export { resAffectedBy };
 export default {
   kitchenWorkers,
   outsideWorkers,
+  resAffectedBy,
 };
 

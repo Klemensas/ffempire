@@ -7,16 +7,18 @@
       kitchen: {},
       outside: {},
     };
+    let production = {};
     const mapRestaurants = {};
     const mapRestaurantLocs = [];
-    const production = {
+
+    const workerBase = 1;
+    const baseProd = {
       megabucks: 0,
       loyals: 1,
       burgers: 5,
       drinks: 5,
       fries: 5,
     };
-
     const resourceNames = ['megabucks', 'loyals', 'burgers', 'fries', 'drinks'];
     const fieldTypes = 7;
 
@@ -38,6 +40,26 @@
       });
     }
 
+    function calculateProd(base = baseProd, baseW = workerBase, wrk = this.workers.kitchen, modifier = this.activeRest.moneyPercent) {
+      modifier = (100 - modifier) / 100;
+      const unmodified = {
+        burgers: (base.burgers + baseW * wrk['burger flipper']),
+        drinks: (base.drinks + baseW * wrk['drink pourer']),
+        fries: (base.fries + baseW * wrk['fry fryer']),
+      };
+      const modified = {
+        burgers: Math.floor(unmodified.burgers * modifier),
+        drinks: Math.floor(unmodified.drinks * modifier),
+        fries: Math.floor(unmodified.fries * modifier),
+        loyals: Math.floor(base.loyals + baseW * wrk.server),
+      };
+      let megabucks = base.megabucks;
+      megabucks += Math.floor((unmodified.burgers - modified.burgers +
+        unmodified.drinks - modified.drinks +
+        unmodified.fries - modified.fries) * 0.5);
+      return Object.assign(modified, { megabucks });
+    }
+
     function setActiveRest(id = user.gameData.restaurants[0]._id) {
       const rest = user.gameData.restaurants.find(o => o._id === id);
       if (typeof rest === 'undefined') {
@@ -51,9 +73,8 @@
     }
 
     function mapWorkers(workerArray) {
-      workerArray.kitchen.map(w => {
-        workers.kitchen[w.title] = w.count;
-      });
+      workerArray.kitchen.forEach(w => workers.kitchen[w.title] = w.count);
+      production = calculateProd(baseProd, workerBase, workers.kitchen, activeRest.moneyPercent);
     }
 
     function displayedRestaurants(location, size) {
@@ -79,25 +100,36 @@
     }
 
     function modifyRes() {
+      console.log(this.production);
       // TODO: stop this from running a lot more than it should
       // console.log('I\'m an asshole so It run multiple times for no reason!', this, activeRest);
       const timeDiff = (Date.now() - new Date(this.activeRest.updatedAt)) / (1000 * 60 * 60);
       const res = {};
       resourceNames.forEach(r => {
-        res[r] = Math.floor(this.activeRest.resources[r] + production[r] * timeDiff);
+        res[r] = Math.floor(this.activeRest.resources[r] + this.production[r] * timeDiff);
       });
-      console.log(res);
       return res;
+    }
+
+    function setMoneyProd(percent) {
+      return $http.post(`api/restaurant/${this.activeRestId}/moneyProd`, { percent })
+        .then(res => {
+          this.updateRest(res.data);
+          this.production = this.calculateProd();
+          return res.data;
+        })
+        .catch(err => {
+          console.error(err);
+          throw 'Server error';
+        });
     }
 
     function updateRest(data) {
       this.activeRest = data;
       mapWorkers(this.activeRest.workers);
-      console.log(this, activeRest);
     }
 
     function canAfford(costs) {
-      console.log(costs);
       const res = this.modifyRes();
       return resourceNames.every(r => costs[r] <= res[r]);
     }
@@ -108,6 +140,7 @@
       activeRest,
       activeRestId,
       canAfford,
+      calculateProd,
       displayedRestaurants,
       getMapRestaurants,
       mapRestaurants,
@@ -116,6 +149,7 @@
       production,
       resourceNames,
       setActiveRest,
+      setMoneyProd,
       updateRest,
       workers,
     };

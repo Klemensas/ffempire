@@ -1,5 +1,5 @@
 import workers from '../../config/game/workers';
-import Restaurant from '../restaurant/restaurant.model';
+import { Restaurant, updateRes } from '../restaurant/restaurant.model';
 import buildings from '../../config/game/buildings';
 
 // Gets worker data
@@ -37,6 +37,7 @@ export function hireWorkers(req, res) {
           return;
         } else {
           // loop through resources, subtracting the costs and returning if the player affords it
+          rest = updateRes(rest);
           const affords = buildings.resources.every(r => {
             rest.resources[r] -= target.costs[r];
             return rest.resources[r] >= 0;

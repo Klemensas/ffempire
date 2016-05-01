@@ -13,6 +13,7 @@ router.get('/', controller.index);
 router.get('/map', auth.isAuthenticated(), controller.map);
 router.get('/buildings', auth.isAuthenticated(), controller.getBuildings);
 router.post('/:id/buildings/upgrade', auth.isAuthenticated(), controller.upgradeBuilding);
+router.post('/:id/moneyProd', auth.isAuthenticated(), controller.setMoneyProd);
 // router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 // router.get('/:id', auth.isAuthenticated(), controller.show);
 // router.post('/', controller.create);

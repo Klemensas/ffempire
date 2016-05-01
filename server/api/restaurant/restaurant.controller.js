@@ -1,7 +1,7 @@
 'use strict';
 
 import _ from 'lodash';
-import Restaurant from './restaurant.model';
+import { Restaurant, updateRes } from './restaurant.model';
 import buildings from '../../config/game/buildings';
 
 function respondWithResult(res, statusCode) {
@@ -35,7 +35,7 @@ function removeEntity(res) {
 }
 
 function handleEntityNotFound(res) {
-  return function(entity) {
+  return function (entity) {
     if (!entity) {
       res.status(404).end();
       return null;
@@ -127,7 +127,7 @@ export function upgradeBuilding(req, res) {
         const building = rest.buildings[buildingIndex];
 
         const costs = buildings.levelCostsNamed(target, building.level);
-
+        rest = updateRes(rest);
         // loop through resources, subtracting the costs and returning if the player affords it
         const affords = buildings.resources.every(r => {
           rest.resources[r] -= costs[r];
@@ -135,22 +135,41 @@ export function upgradeBuilding(req, res) {
         });
         if (!affords) {
           // TODO: error, can't afford
-          res.status(401).end();
-          return;
+          return res.status(401).end();
         }
         building.level++;
         // rest.set(`buildings.${buildingIndex}.level`, ++building.level);
-        rest.save()
-          .then(r => {
-            console.log(r);
-            res.json(r);
-          });
+        rest.save().then(r => res.json(r));
       })
       .catch(handleError(res));
   } else {
     // TODO: error, non user restaurant
     res.status(404).end();
   }
+}
+
+export function setMoneyProd(req, res) {
+  if (isOwner(req.user, req.params.id) && typeof req.body.percent === 'string') {
+    const percent = req.body.percent;
+    Restaurant.findById(req.params.id)
+      .then(handleEntityNotFound(res))
+      .then(rest => {
+        if (canSetMoneyProd(rest)) {
+          rest = updateRes(rest);
+          rest.moneyPercent = percent;
+          rest.save().then(r => res.json(r));
+        }
+      })
+      .catch(handleError(res));
+  } else {
+    // TODO: error, non user restaurant
+    res.status(404).end();
+  }
+}
+
+function canSetMoneyProd(rest) {
+  // TODO: check if player can control money prod
+  return true;
 }
 
 // Generates a restaurant for new players

@@ -91,21 +91,20 @@ function populateUsers() {
   return;
 }
 
-User.find({}).remove().then(() => {
-  Restaurant.find({}).remove()
-    .then(() => {
-      restaurants.forEach((rest, i) => {
-        Restaurant.create(rest)
-          .then(r => {
-            savedRestaurants.push(r);
-            if (i === restaurants.length - 1) {
-              populateUsers();
-            }
-            return true;
-          });
-      });
-      return true;
-    });
-  return true;
-});
-
+// User.find({}).remove().then(() => {
+//   Restaurant.find({}).remove()
+//     .then(() => {
+//       restaurants.forEach((rest, i) => {
+//         Restaurant.create(rest)
+//           .then(r => {
+//             savedRestaurants.push(r);
+//             if (i === restaurants.length - 1) {
+//               populateUsers();
+//             }
+//             return true;
+//           });
+//       });
+//       return true;
+//     });
+//   return true;
+// });

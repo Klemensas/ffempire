@@ -7,13 +7,28 @@
       this.buildings = Restaurant.activeRest.buildings;
       this.restaurantWorkers = Restaurant.workers;
       this.details = Building.details;
-
+      this.prodSold = Restaurant.activeRest.moneyPercent;
       this.kitchenWorkerData = {};
       this.outsideWorkerData = {};
 
       this.Restaurant = Restaurant;
       this.Building = Building;
       this.Worker = Worker;
+
+      this.prodSoldChange = _.debounce(changeProdSold, 350, { maxWait: 2000, trailing: true });
+
+      function changeProdSold(percent) {
+        if (this.canControlMoney()) {
+          this.Restaurant.setMoneyProd(percent)
+            .then(r => {
+              this.scope.gv.production = this.Restaurant.production;
+            });
+        }
+      }
+
+      this.canControlMoney = function () {
+        return true;
+      };
 
       this.Worker.getWorkerData()
         .then((workers) => {
@@ -44,6 +59,7 @@
         .then(r => {
           this.restaurantWorkers = this.Restaurant.workers;
           this.scope.gv.resources = this.Restaurant.modifyRes();
+          this.scope.gv.production = this.Restaurant.calculateProd();
         });
     }
 

@@ -17,7 +17,6 @@
       }
       return $http.get('/api/worker').then(response => {
         kitchenWorkers = response.data.kitchenWorkers;
-        console.log(kitchenWorkers);
         outsideWorkers = response.data.outsideWorkers;
         return { kitchenWorkers, outsideWorkers };
       });
