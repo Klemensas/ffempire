@@ -68,6 +68,27 @@ const RestaurantSchema = new Schema({
     ref: 'User',
     default: null,
   },
+  events: {
+    building: [{
+      queued: Date,
+      ends: Date,
+    }],
+    unit: [{
+      amount: Number,
+      queued: Date,
+      ends: Date,
+    }],
+    trade: [{
+      amount: Number,
+      queued: Date,
+      ends: Date,
+    }],
+    movement: [{
+      queued: Date,
+      ends: Date,
+    }],
+    soonest: Date,
+  },
   createdAt: {
     type: Date,
     default: new Date(),
