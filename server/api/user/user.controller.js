@@ -133,20 +133,11 @@ export function authCallback(req, res) {
 function addRestaurant(user) {
   return generateRestaurant(user)
     .then(rest => {
-      console.log('generated res');
-      console.log(rest);
       user.gameData = {
         active: true,
         restaurants: [rest],
-        workers: {
-          kitchen: workers.kitchenWorkers,
-          outside: workers.outsideWorkers,
-        }
       };
-      return user.save()
-        .then(user => {
-          return user;
-        });
+      return user.save();
     });
 }
 

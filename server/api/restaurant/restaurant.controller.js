@@ -1,8 +1,8 @@
-'use strict';
-
 import _ from 'lodash';
 import { Restaurant, updateRes } from './restaurant.model';
 import buildings from '../../config/game/buildings';
+import workers from '../../config/game/workers';
+import events from '../../components/events';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -108,6 +108,7 @@ export function destroy(req, res) {
 // Get building costs and stats
 export function getBuildings(req, res) {
   const buildingData = {
+    buildTimes: buildings.buildTimes,
     costs: buildings.costsNamed,
     requirements: buildings.requirements,
     details: buildings.details,
@@ -137,7 +138,8 @@ export function upgradeBuilding(req, res) {
           // TODO: error, can't afford
           return res.status(401).end();
         }
-        building.level++;
+        events.queueBuilding(rest, building);
+        // building.level++;
         // rest.set(`buildings.${buildingIndex}.level`, ++building.level);
         rest.save().then(r => res.json(r));
       })
@@ -182,6 +184,7 @@ export function generateRestaurant(user) {
         name: `${user.name}'s restaurant`,
         buildings: buildings.defaultBuildings,
         owner: user,
+        workers: workers.defaultWorkers,
       });
     });
 }
