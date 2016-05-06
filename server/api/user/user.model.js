@@ -1,21 +1,19 @@
-'use strict';
-
 import crypto from 'crypto';
 import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
-import {Schema} from 'mongoose';
+import { Schema } from 'mongoose';
 
 const authTypes = ['github', 'twitter', 'facebook', 'google'];
 
-var UserSchema = new Schema({
+const UserSchema = new Schema({
   name: String,
   email: {
     type: String,
-    lowercase: true
+    lowercase: true,
   },
   role: {
     type: String,
-    default: 'user'
+    default: 'user',
   },
   password: String,
   provider: String,
@@ -27,7 +25,7 @@ var UserSchema = new Schema({
   gameData: {
     active: {
       type: Boolean,
-      default: false
+      default: false,
     },
     franchise: { type: mongoose.Schema.Types.ObjectId, ref: 'Franchise' },
     restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }],

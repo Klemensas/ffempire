@@ -34,7 +34,8 @@ for (let i = 1; i < 100; i++) {
           }, {
             title: 'server',
             count: 0,
-          }, ],
+          },
+          ],
         },
       });
     }
