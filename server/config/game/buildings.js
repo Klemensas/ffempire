@@ -61,6 +61,47 @@ const costs = {
   ],
 };
 
+const buildTimes = {
+  headquarters: [
+    10,
+    30,
+    60,
+  ],
+  storage: [
+    5,
+    15,
+    45,
+  ],
+  cellar: [
+    5,
+    15,
+    45,
+  ],
+  kitchen: [
+    10,
+    30,
+    60,
+    120,
+    300,
+  ],
+  chairs: [
+    10,
+    40,
+    150,
+    400,
+  ],
+  training: [
+    20,
+    60,
+    180,
+  ],
+  interior: [
+    12,
+    45,
+    200,
+  ],
+};
+
 const requirements = {
   headquarters: null,
   storage: null,
@@ -121,13 +162,14 @@ function levelCostsNamed(building, level) {
 }
 
 export default {
-  resources,
-  defaultBuildings,
+  buildTimes,
   costs,
+  defaultBuildings,
   details,
-  requirements,
   levelCosts,
   levelCostsNamed,
+  requirements,
+  resources,
   costsNamed: toObject(costs, resources),
 };
 

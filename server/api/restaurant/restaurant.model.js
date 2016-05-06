@@ -70,6 +70,8 @@ const RestaurantSchema = new Schema({
   },
   events: {
     building: [{
+      action: String,
+      target: String,
       queued: Date,
       ends: Date,
     }],

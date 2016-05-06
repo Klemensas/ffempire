@@ -100,7 +100,6 @@
     }
 
     function modifyRes() {
-      console.log(this.production);
       // TODO: stop this from running a lot more than it should
       // console.log('I\'m an asshole so It run multiple times for no reason!', this, activeRest);
       const timeDiff = (Date.now() - new Date(this.activeRest.updatedAt)) / (1000 * 60 * 60);

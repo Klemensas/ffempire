@@ -55,8 +55,27 @@ const resAffectedBy = {
   loyals: 'server',
 };
 
+const defaultWorkers = {
+  kitchen: [{
+    title: 'burger flipper',
+    count: 0,
+  }, {
+    title: 'fry fryer',
+    count: 0,
+  }, {
+    title: 'drink pourer',
+    count: 0,
+  }, {
+    title: 'server',
+    count: 0,
+  },
+  ],
+  outside: [],
+};
+
 export { resAffectedBy };
 export default {
+  defaultWorkers,
   kitchenWorkers,
   outsideWorkers,
   resAffectedBy,
