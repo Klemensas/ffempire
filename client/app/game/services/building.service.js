@@ -1,22 +1,25 @@
 (function () {
   function Building($http, Restaurant) {
+    const buildTimes = {};
     const costs = {};
     const details = {};
     const requirements = {};
 
-    function findCurrentCosts(costs) {
-      Restaurant.activeRest.buildings.map(b => {
-        b.costs = costs[b.title][b.level];
-      });
+    function mapBuildingValues(costs, buildTimes) {
+      for (const building of Restaurant.activeRest.buildings) {
+        building.costs = costs[building.title][building.level];
+        building.buildTime = buildTimes[building.title][building.level];
+      }
     }
 
     function getBuildings() {
       return $http.get('/api/restaurant/buildings/')
         .then(res => {
+          this.buildTimes = res.data.buildTimes;
           this.costs = res.data.costs;
           this.requirements = res.data.requirements;
           this.details = res.data.details;
-          findCurrentCosts(this.costs);
+          mapBuildingValues(this.costs, this.buildTimes);
           return this;
         })
         .catch(err => {
@@ -25,12 +28,11 @@
         });
     }
 
-
     function upgradeAttempt(building = {}) {
       return $http.post(`/api/restaurant/${Restaurant.activeRestId}/buildings/upgrade`, { building: building.title })
         .then(res => {
           Restaurant.updateRest(res.data);
-          findCurrentCosts(this.costs);
+          mapBuildingValues(this.costs, this.buildTimes);
           return Restaurant.activeRest;
         })
         .catch(err => {
