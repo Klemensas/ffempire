@@ -1,10 +1,12 @@
 (function () {
   class RestaurantController {
-    constructor($http, $scope, Auth, Restaurant, Building, Worker) {
+    constructor($http, $scope, $timeout, Auth, Restaurant, Building, Worker) {
       this.user = Auth.getCurrentUser();
       this.scope = $scope;
 
       this.buildings = Restaurant.activeRest.buildings;
+      this.events = Restaurant.activeRest.events;
+
       this.restaurantWorkers = Restaurant.workers;
       this.details = Building.details;
       this.prodSold = Restaurant.activeRest.moneyPercent;
@@ -15,7 +17,6 @@
       this.Building = Building;
       this.Worker = Worker;
 
-      this.prodSoldChange = _.debounce(changeProdSold, 350, { maxWait: 2000, trailing: true });
 
       function changeProdSold(percent) {
         if (this.canControlMoney()) {
@@ -29,6 +30,19 @@
       this.canControlMoney = function () {
         return true;
       };
+
+      this.monitorQueues = function () {
+        const time = Date.now();
+        this.events.building.forEach(e => { e.left = Math.ceil((new Date(e.ends) - time) / 1000); });
+        $timeout(this.monitorQueues.bind(this), 1000);
+      };
+
+      this.prodSoldChange = _.debounce(changeProdSold, 500, { maxWait: 2000, trailing: true });
+
+      console.log(this.events);
+      if (this.events.soonest) {
+        this.monitorQueues();
+      }
 
       this.Worker.getWorkerData()
         .then((workers) => {
