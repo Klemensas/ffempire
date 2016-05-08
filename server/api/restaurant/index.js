@@ -12,6 +12,7 @@ router.get('/', controller.index);
 // router.get('/', auth.isAuthenticated(), controller.restaurantView);
 router.get('/map', auth.isAuthenticated(), controller.map);
 router.get('/buildings', auth.isAuthenticated(), controller.getBuildings);
+router.get('/:id/updateQueues', auth.isAuthenticated(), controller.updateQueues);
 router.post('/:id/buildings/upgrade', auth.isAuthenticated(), controller.upgradeBuilding);
 router.post('/:id/moneyProd', auth.isAuthenticated(), controller.setMoneyProd);
 // router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);

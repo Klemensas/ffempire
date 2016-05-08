@@ -116,12 +116,24 @@ export function getBuildings(req, res) {
   return res.json(buildingData);
 }
 
+export function updateQueues(req, res) {
+  if (isOwner(req.user, req.params.id)) {
+    return Restaurant.findById(req.params.id)
+      .then(handleEntityNotFound(res))
+      .then(rest => {
+        rest = events.checkQueueAndUpdate(rest);
+        return rest.save().then(r => res.json(r));
+      });
+  }
+  res.status(401).end();
+}
+
 // Post, attempt to upgrade a building
 export function upgradeBuilding(req, res) {
   // TODO: get the user, check if he owns the restaurant, check if he has enough resources and meets the reqs
   if (isOwner(req.user, req.params.id) && typeof req.body.building === 'string') {
     const target = req.body.building;
-    Restaurant.findById(req.params.id)
+    return Restaurant.findById(req.params.id)
       .then(handleEntityNotFound(res))
       .then(rest => {
         const buildingIndex = rest.buildings.findIndex(b => b.title === target);
@@ -141,13 +153,12 @@ export function upgradeBuilding(req, res) {
         events.queueBuilding(rest, building);
         // building.level++;
         // rest.set(`buildings.${buildingIndex}.level`, ++building.level);
-        rest.save().then(r => res.json(r));
+        return rest.save().then(r => res.json(r));
       })
       .catch(handleError(res));
-  } else {
-    // TODO: error, non user restaurant
-    res.status(404).end();
   }
+  // TODO: error, non user restaurant
+  res.status(401).end();
 }
 
 export function setMoneyProd(req, res) {
@@ -163,10 +174,9 @@ export function setMoneyProd(req, res) {
         }
       })
       .catch(handleError(res));
-  } else {
-    // TODO: error, non user restaurant
-    res.status(404).end();
   }
+  // TODO: error, non user restaurant
+  res.status(401).end();
 }
 
 function canSetMoneyProd(rest) {
