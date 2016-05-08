@@ -18,7 +18,6 @@
       this.Worker = Worker;
 
       let checkingQueue = false;
-
       function changeProdSold(percent) {
         if (this.canControlMoney()) {
           this.Restaurant.setMoneyProd(percent)

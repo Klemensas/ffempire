@@ -40,7 +40,7 @@ function queueBuilding(rest, building) {
     type: 'build',
     target: building.title,
     queued: time,
-    ends: time + buildTime,
+    ends: time + buildTime * 1000,
   });
   rest.events.soonest = findSoonest(rest.events);
   return rest;
