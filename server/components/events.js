@@ -46,4 +46,31 @@ function queueBuilding(rest, building) {
   return rest;
 }
 
+
+let updatingQueue = false;
+function moveQueues() {
+  if (!updatingQueue) {
+    let updatedItems = 0;
+    updatingQueue = true;
+    const currentTime = new Date();
+    const stream = Restaurant.find({ 'events.soonest': { $lte: currentTime } }).stream();
+    stream.on('data', (res) => {
+      stream.pause();
+      res = checkQueueAndUpdate(res);
+      updatedItems++;
+      res.save().then(() => stream.resume());
+    })
+    .on('error', (e) => {
+      console.log('ERROR ERROR', e);
+    })
+    .on('close', () => {
+      console.log(`${currentTime}, queue updated successfully, items affected #${updatedItems}`);
+      updatingQueue = false;
+    });
+  }
+  setTimeout(moveQueues, 5000 * 60);
+}
+
+moveQueues();
+
 export default { queueBuilding, checkQueueAndUpdate };
