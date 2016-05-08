@@ -7,6 +7,7 @@
       kitchen: {},
       outside: {},
     };
+
     let production = {};
     const mapRestaurants = {};
     const mapRestaurantLocs = [];
@@ -70,6 +71,13 @@
       activeRestId = id;
       mapWorkers(activeRest.workers);
       return rest;
+    }
+
+    function checkQueue() {
+      return $http.get(`api/restaurant/${this.activeRestId}/updateQueues`).then(res => {
+        this.updateRest(res.data);
+        return this.activeRest;
+      });
     }
 
     function mapWorkers(workerArray) {
@@ -140,6 +148,7 @@
       activeRestId,
       canAfford,
       calculateProd,
+      checkQueue,
       displayedRestaurants,
       getMapRestaurants,
       mapRestaurants,

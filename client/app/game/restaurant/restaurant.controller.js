@@ -8,7 +8,7 @@
       this.events = Restaurant.activeRest.events;
 
       this.restaurantWorkers = Restaurant.workers;
-      this.details = Building.details;
+      this.buildingDetails = Building.details;
       this.prodSold = Restaurant.activeRest.moneyPercent;
       this.kitchenWorkerData = {};
       this.outsideWorkerData = {};
@@ -17,6 +17,7 @@
       this.Building = Building;
       this.Worker = Worker;
 
+      let checkingQueue = false;
 
       function changeProdSold(percent) {
         if (this.canControlMoney()) {
@@ -33,13 +34,27 @@
 
       this.monitorQueues = function () {
         const time = Date.now();
-        this.events.building.forEach(e => { e.left = Math.ceil((new Date(e.ends) - time) / 1000); });
-        $timeout(this.monitorQueues.bind(this), 1000);
+        let expired;
+        this.events.building.forEach(e => {
+          e.left = Math.ceil((new Date(e.ends) - time) / 1000);
+          if (e.left < 0) {
+            expired = true;
+          }
+        });
+        if (expired && !checkingQueue) {
+          checkingQueue = true;
+          this.Restaurant.checkQueue().then(r => {
+            checkingQueue = false;
+            this.updateView(r);
+          });
+        }
+        if (this.events.soonest) {
+          $timeout(this.monitorQueues.bind(this), 1000);
+        }
       };
 
       this.prodSoldChange = _.debounce(changeProdSold, 500, { maxWait: 2000, trailing: true });
 
-      console.log(this.events);
       if (this.events.soonest) {
         this.monitorQueues();
       }
@@ -51,12 +66,28 @@
         });
     }
 
+    updateView() {
+      console.log('update view')
+      const monitor = this.events.soonest === null;
+      this.events = this.Restaurant.activeRest.events;
+
+      this.Building.mapBuildingValues();
+      this.buildings = this.Restaurant.activeRest.buildings;
+
+
+      this.restaurantWorkers = this.Restaurant.workers;
+
+      this.scope.gv.resources = this.Restaurant.modifyRes();
+      this.scope.gv.production = this.Restaurant.calculateProd();
+      if (monitor) {
+        console.log(this.buildings);
+        console.log('update enable monitoring')
+        this.monitorQueues();
+      }
+    }
+
     upgrade(building) {
-      this.Building.upgradeAttempt(building)
-        .then(r => {
-          this.buildings = this.Restaurant.activeRest.buildings;
-          this.scope.gv.resources = this.Restaurant.modifyRes();
-        });
+      return this.Building.upgradeAttempt(building).then(r => this.updateView(r));
     }
 
     canTrainAny() {
@@ -69,12 +100,7 @@
 
     hireWorker(worker) {
       //! TODO:  add ability to hire more than one worker
-      this.Worker.hireAttempt(worker)
-        .then(r => {
-          this.restaurantWorkers = this.Restaurant.workers;
-          this.scope.gv.resources = this.Restaurant.modifyRes();
-          this.scope.gv.production = this.Restaurant.calculateProd();
-        });
+      this.Worker.hireAttempt(worker).then(r => this.updateView(r));
     }
 
     upgradeable(building) {
@@ -83,6 +109,7 @@
       }
       return false;
     }
+
     canAfford(target) {
       return this.Restaurant.canAfford(target.costs);
     }

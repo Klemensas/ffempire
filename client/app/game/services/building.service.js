@@ -5,7 +5,7 @@
     const details = {};
     const requirements = {};
 
-    function mapBuildingValues(costs, buildTimes) {
+    function mapBuildingValues(costs = this.costs, buildTimes = this.buildTimes) {
       for (const building of Restaurant.activeRest.buildings) {
         building.costs = costs[building.title][building.level];
         building.buildTime = buildTimes[building.title][building.level];
@@ -69,6 +69,7 @@
       buildingCosts,
       costs,
       details,
+      mapBuildingValues,
       meetsRequirements,
       requirements,
       getBuildings,
