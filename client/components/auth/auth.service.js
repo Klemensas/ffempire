@@ -22,7 +22,7 @@ function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
     login(data, callback) {
       return $http.post('/auth/local', {
         email: data.email,
-        password: data.password
+        password: data.password,
       })
         .then(res => {
           $cookies.put('token', res.data.token);
