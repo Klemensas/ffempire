@@ -1,15 +1,22 @@
 import Restaurant from '../api/restaurant/restaurant.model';
 import buildings from '../config/game/buildings';
+
 function findSoonest(events) {
-  let soonest = Infinity;
-  events.building.forEach(b => { soonest = b.ends < soonest ? b.ends : soonest; });
-  return soonest < Infinity ? soonest : null;
+  return events.building.length ? events.building[0].ends : null;
+}
+
+function queuedBuildings(buildings) {
+  const queuedLevels = {};
+  for (const build of buildings) {
+    queuedLevels[build.target] = queuedLevels[build.target] + 1 || 1;
+  }
+  return queuedLevels;
 }
 
 function checkQueueAndUpdate(rest) {
   const time = Date.now();
   if (rest.events.soonest > time) {
-    return false;
+    return rest;
   }
   const endedEvents = [];
   for (let i = 0; i < rest.events.building.length; i++) {
@@ -33,14 +40,18 @@ function updateBuildings(rest, targets) {
   return rest;
 }
 
-function queueBuilding(rest, building) {
+function queueBuilding(rest, building, level) {
   const time = Date.now();
-  const buildTime = buildings.buildTimes[building.title][building.level];
+  const buildTime = buildings.buildTimes[building.title][level] * 1000;
+  let ends = time + buildTime;
+  for (const item of rest.events.building) {
+    ends = item.ends.getTime() + buildTime;
+  }
   rest.events.building.push({
     type: 'build',
     target: building.title,
     queued: time,
-    ends: time + buildTime * 1000,
+    ends,
   });
   rest.events.soonest = findSoonest(rest.events);
   return rest;
@@ -73,4 +84,4 @@ function moveQueues() {
 
 moveQueues();
 
-export default { queueBuilding, checkQueueAndUpdate };
+export default { queueBuilding, queuedBuildings, checkQueueAndUpdate };

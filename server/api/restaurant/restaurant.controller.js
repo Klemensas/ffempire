@@ -140,11 +140,14 @@ export function upgradeBuilding(req, res) {
     return Restaurant.findById(req.params.id)
       .then(handleEntityNotFound(res))
       .then(rest => {
+        rest = events.checkQueueAndUpdate(rest);
+        rest = updateRes(rest);
+
+        const queuedBuildings = events.queuedBuildings(rest.events.building);
         const buildingIndex = rest.buildings.findIndex(b => b.title === target);
         const building = rest.buildings[buildingIndex];
-
-        const costs = buildings.levelCostsNamed(target, building.level);
-        rest = updateRes(rest);
+        const targetLevel = building.level + (queuedBuildings[building.title] || 0);
+        const costs = buildings.levelCostsNamed(target, targetLevel);
         // loop through resources, subtracting the costs and returning if the player affords it
         const affords = buildings.resources.every(r => {
           rest.resources[r] -= costs[r];
@@ -154,8 +157,7 @@ export function upgradeBuilding(req, res) {
           // TODO: error, can't afford
           return res.status(401).end();
         }
-        events.queueBuilding(rest, building);
-        // building.level++;
+        events.queueBuilding(rest, building, targetLevel);
         // rest.set(`buildings.${buildingIndex}.level`, ++building.level);
         return rest.save().then(r => res.json(r));
       })
