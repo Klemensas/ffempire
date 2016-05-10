@@ -4,11 +4,18 @@
     const costs = {};
     const details = {};
     const requirements = {};
+    let queuedLevels = {};
 
     function mapBuildingValues(costs = this.costs, buildTimes = this.buildTimes) {
+      queuedLevels = {};
+      for (const build of Restaurant.activeRest.events.building) {
+        queuedLevels[build.target] = queuedLevels[build.target] + 1 || 1;
+      }
       for (const building of Restaurant.activeRest.buildings) {
-        building.costs = costs[building.title][building.level];
-        building.buildTime = buildTimes[building.title][building.level];
+        const plusQ = queuedLevels[building.title] || 0;
+        building.costs = costs[building.title][building.level + plusQ];
+        building.buildTime = buildTimes[building.title][building.level + plusQ];
+        building.queued = plusQ;
       }
     }
 

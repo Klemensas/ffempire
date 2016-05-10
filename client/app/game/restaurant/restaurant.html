@@ -30,7 +30,7 @@
         <div class="col-sm-4">{{item.target}}</div>
         <div class="col-sm-4">{{item.ends}}</div>
         <div class="col-sm-3">{{timeLeft(item.left)}}</div>
-        <div class="col-sm-1">x</div>
+        <!-- <div class="col-sm-1">x</div> -->
       </div>
     </div>
   </div>
@@ -40,6 +40,7 @@
         <span class="building-detail-collapse" ng-click="building.details.active = !building.details.active"><i class="fa fa-chevron-down"></i></span>
         <span class="building-title">{{building.title}}</span>
         <span class="building-level">{{building.level}}</span>
+        <span ng-show="building.queued">(+{{building.queued}})</span>
       </div>
       <div ng-if="gr.upgradeable(building)" ng-switch="gr.canAfford(building)" class="col-sm-5 text-right">
         <span class="time">{{timeLeft(building.buildTime)}}</span>
