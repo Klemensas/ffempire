@@ -121,8 +121,12 @@ export function updateQueues(req, res) {
     return Restaurant.findById(req.params.id)
       .then(handleEntityNotFound(res))
       .then(rest => {
+        const oldRest = Object.assign({}, rest);
         rest = events.checkQueueAndUpdate(rest);
-        return rest.save().then(r => res.json(r));
+        if (oldRest.soonest === rest.soonest) {
+          return rest.save().then(r => res.json(r));
+        }
+        return res.status(401).end();
       });
   }
   res.status(401).end();
