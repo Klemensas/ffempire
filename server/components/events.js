@@ -69,7 +69,7 @@ function moveQueues() {
       stream.pause();
       res = checkQueueAndUpdate(res);
       updatedItems++;
-      res.save().then(() => stream.resume());
+      Restaurant.update({ _id: res._id, nonce: res.nonce }, res).then(() => stream.resume());
     })
     .on('error', (e) => {
       console.log('ERROR ERROR', e);

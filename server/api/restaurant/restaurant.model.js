@@ -16,6 +16,11 @@ const bucksPerFood = 0.5;
 const workerProduction = 1;
 
 const RestaurantSchema = new Schema({
+  nonce: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    default: mongoose.Types.ObjectId,
+  },
   name: String,
   location: [{ type: Number }],
   resources: {
@@ -123,11 +128,19 @@ function updateRes(rest) {
 
 RestaurantSchema
   .pre('save', function (next) {
+    this.nonce = mongoose.Types.ObjectId();
     if (new Date() - this.updatedAt > 1000) {
       updateRes(this);
     }
     next();
-  });
+  })
+  .pre('update', function (next) {
+    this.nonce = mongoose.Types.ObjectId();
+    if (new Date() - this.updatedAt > 1000) {
+      updateRes(this);
+    }
+    next();
+  })
 
 export const Restaurant = mongoose.model('Restaurant', RestaurantSchema);
 export { updateRes };

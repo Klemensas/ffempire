@@ -33,30 +33,30 @@ export function hireWorkers(req, res) {
         // no worker found 
         if (!target) {
           // TODO: error, no worker
+          return res.status(401).end();
+        }
+        // loop through resources, subtracting the costs and returning if the player affords it
+        rest = updateRes(rest);
+        const affords = buildings.resources.every(r => {
+          rest.resources[r] -= target.costs[r];
+          return rest.resources[r] >= 0;
+        });
+        if (!affords) {
+          // TODO: error, can't afford
           res.status(401).end();
           return;
-        } else {
-          // loop through resources, subtracting the costs and returning if the player affords it
-          rest = updateRes(rest);
-          const affords = buildings.resources.every(r => {
-            rest.resources[r] -= target.costs[r];
-            return rest.resources[r] >= 0;
-          });
-          if (!affords) {
-            // TODO: error, can't afford
-            res.status(401).end();
-            return;
-          }
-          const worker = rest.workers.kitchen.find(w => w.title === target.title);
-          worker.count++;
-          rest.save()
-            .then(r => {
-              console.log('hallelujah');
-              console.log(r);
-              return res.json(r);
-            });
         }
-      });
+        const worker = rest.workers.kitchen.find(w => w.title === target.title);
+        worker.count++;
+        Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
+          .then(r => {
+            console.log('upd', r)
+            if (r.nModified) {
+              return res.json(rest);
+            }
+            return setTimeout(hireWorkers, 10, req, res);
+          });
+    });
   } else {
     console.log('error');
   }

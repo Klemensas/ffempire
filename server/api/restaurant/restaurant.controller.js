@@ -124,7 +124,14 @@ export function updateQueues(req, res) {
         const oldRest = Object.assign({}, rest);
         rest = events.checkQueueAndUpdate(rest);
         if (oldRest.soonest === rest.soonest) {
-          return rest.save().then(r => res.json(r));
+          rest = updateRes(rest);
+          return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
+          .then(r => {
+            if (r.nModified) {
+              return res.json(rest);
+            }
+            return setTimeout(updateQueues, 10, req, res);
+          });
         }
         return res.status(401).end();
       });
