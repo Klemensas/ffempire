@@ -50,7 +50,6 @@ export function hireWorkers(req, res) {
         worker.count++;
         Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
           .then(r => {
-            console.log('upd', r)
             if (r.nModified) {
               return res.json(rest);
             }

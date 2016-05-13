@@ -166,7 +166,13 @@ export function upgradeBuilding(req, res) {
         }
         events.queueBuilding(rest, building, targetLevel);
         // rest.set(`buildings.${buildingIndex}.level`, ++building.level);
-        return rest.save().then(r => res.json(r));
+        return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
+        .then(r => {
+          if (r.nModified) {
+            return res.json(rest);
+          }
+          return setTimeout(updateQueues, 10, req, res);
+        });
       })
       .catch(handleError(res));
   }
@@ -184,6 +190,13 @@ export function setMoneyProd(req, res) {
           rest = updateRes(rest);
           rest.moneyPercent = percent;
           rest.save().then(r => res.json(r));
+          return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
+          .then(r => {
+            if (r.nModified) {
+              return res.json(rest);
+            }
+            return setTimeout(updateQueues, 10, req, res);
+          });
         }
       })
       .catch(handleError(res));
