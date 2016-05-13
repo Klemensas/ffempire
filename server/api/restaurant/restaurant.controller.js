@@ -164,7 +164,7 @@ export function upgradeBuilding(req, res) {
           // TODO: error, can't afford
           return res.status(401).end();
         }
-        events.queueBuilding(rest, building, targetLevel);
+        rest = events.queueBuilding(rest, building, targetLevel);
         // rest.set(`buildings.${buildingIndex}.level`, ++building.level);
         return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
         .then(r => {

@@ -82,6 +82,7 @@
 
     function mapWorkers(workerArray) {
       workerArray.kitchen.forEach(w => workers.kitchen[w.title] = w.count);
+      workerArray.outside.forEach(w => workers.outside[w.title] = w.count);
       production = calculateProd(baseProd, workerBase, workers.kitchen, activeRest.moneyPercent);
     }
 

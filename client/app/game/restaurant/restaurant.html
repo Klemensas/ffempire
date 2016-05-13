@@ -7,9 +7,25 @@
     </div>
     <div uib-collapse="!gr.trainingActive" class="margin-top-two">
       <div class="col-sm-12 well well-lg">
+        <h5>Kitchen workers</h5>
         <div ng-repeat="worker in gr.kitchenWorkerData" ng-if="gr.canTrain(worker.requires)" class="row worker-data" ng-switch="gr.canAfford(worker)">
           <div class="col-md-5">{{worker.title}}</div>
           <div class="col-md-4">Owned {{gr.restaurantWorkers.kitchen[worker.title]}}</div>
+          <div class="col-md-3">
+            <span class="resource res-small"><i class="res fa fa-money"></i> {{worker.costs.megabucks}}</span>
+            <span class="resource res-small"><i class="res res-burgers"></i> {{worker.costs.burgers}}</span>
+            <span class="resource res-small"><i class="res res-fries"></i> {{worker.costs.fries}}</span>
+            <span class="resource res-small"><i class="res res-drinks"></i> {{worker.costs.drinks}}</span>
+            <span class="resource res-small"><i class="res fa fa-users"></i> {{worker.costs.loyals}}</span>
+            <span ng-switch-when="true" class="btn btn-xs btn-primary" ng-click="gr.hireWorker(worker)">Hire</span>
+            <span ng-switch-when="false">Can't afford</span>
+          </div>
+        </div>
+
+        <h5>Outside workers</h5>
+        <div ng-repeat="worker in gr.outsideWorkerData" ng-if="gr.canTrain(worker.requires)" class="row worker-data" ng-switch="gr.canAfford(worker)">
+          <div class="col-md-5">{{worker.title}}</div>
+          <div class="col-md-4">Owned {{gr.restaurantWorkers.outside[worker.title]}}</div>
           <div class="col-md-3">
             <span class="resource res-small"><i class="res fa fa-money"></i> {{worker.costs.megabucks}}</span>
             <span class="resource res-small"><i class="res res-burgers"></i> {{worker.costs.burgers}}</span>

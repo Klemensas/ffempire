@@ -132,24 +132,7 @@ const outsideWorkers = [{
     attack: 0,
     defense: 0,
   },
-}, {
-  title: 'inspector',
-  costs: {
-    megabucks: 0,
-    burgers: 0,
-    fries: 0,
-    drinks: 0,
-    loyals: 0,
-  },
-  requires: {
-    kitchen: 5,
-  },
-  speed: 10,
-  combat: {
-    attack: 0,
-    defense: 0,
-  },
-}, {
+},   {
   title: 'inspector',
   costs: {
     megabucks: 0,
@@ -230,10 +213,16 @@ const defaultWorkers = {
   }],
 };
 
-export { resAffectedBy };
+const kitchenTitles = kitchenWorkers.map(w => w.title);
+const outsideTitles = outsideWorkers.map(w => w.title);
+
+
+export { resAffectedBy, defaultWorkers };
 export default {
   defaultWorkers,
+  kitchenTitles,
   kitchenWorkers,
+  outsideTitles,
   outsideWorkers,
   resAffectedBy,
 };

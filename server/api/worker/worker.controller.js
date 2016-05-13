@@ -29,8 +29,9 @@ export function hireWorkers(req, res) {
     Restaurant.findById(data.rest)
       .then(handleEntityNotFound(res))
       .then(rest => {
-        const target = workers.kitchenWorkers.find(w => w.title === data.worker);
-        // no worker found 
+        const workerTarget = workers.kitchenTitles.indexOf(data.worker) === -1 ? 'outside' : 'kitchen';
+        const target = workers[`${workerTarget}Workers`].find(w => w.title === data.worker);
+        // no worker found
         if (!target) {
           // TODO: error, no worker
           return res.status(401).end();
@@ -46,7 +47,7 @@ export function hireWorkers(req, res) {
           res.status(401).end();
           return;
         }
-        const worker = rest.workers.kitchen.find(w => w.title === target.title);
+        const worker = rest.workers[workerTarget].find(w => w.title === target.title);
         worker.count++;
         Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
           .then(r => {
