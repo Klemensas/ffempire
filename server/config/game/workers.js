@@ -10,6 +10,7 @@ const kitchenWorkers = [{
   requires: {
     kitchen: 2,
   },
+  buildTime: 600,
 }, {
   title: 'fry fryer',
   costs: {
@@ -22,6 +23,7 @@ const kitchenWorkers = [{
   requires: {
     kitchen: 2,
   },
+  buildTime: 600,
 }, {
   title: 'drink pourer',
   costs: {
@@ -34,6 +36,7 @@ const kitchenWorkers = [{
   requires: {
     kitchen: 2,
   },
+  buildTime: 600,
 }, {
   title: 'server',
   costs: {
@@ -46,6 +49,7 @@ const kitchenWorkers = [{
   requires: {
     kitchen: 5,
   },
+  buildTime: 600,
 }];
 const outsideWorkers = [{
   title: 'bouncer',
@@ -64,6 +68,7 @@ const outsideWorkers = [{
     attack: 1,
     defense: 10,
   },
+  buildTime: 900,
 }, {
   title: 'mobster',
   costs: {
@@ -81,6 +86,7 @@ const outsideWorkers = [{
     attack: 20,
     defense: 50,
   },
+  buildTime: 2100,
 }, {
   title: 'punk',
   costs: {
@@ -98,6 +104,7 @@ const outsideWorkers = [{
     attack: 10,
     defense: 0,
   },
+  buildTime: 700,
 }, {
   title: 'thug',
   costs: {
@@ -115,6 +122,7 @@ const outsideWorkers = [{
     attack: 40,
     defense: 10,
   },
+  buildTime: 1800,
 }, {
   title: 'spy',
   costs: {
@@ -132,7 +140,8 @@ const outsideWorkers = [{
     attack: 0,
     defense: 0,
   },
-},   {
+  buildTime: 1000,
+}, {
   title: 'inspector',
   costs: {
     megabucks: 0,
@@ -149,6 +158,7 @@ const outsideWorkers = [{
     attack: 30,
     defense: 10,
   },
+  buildTime: 3000,
 }, {
   title: 'corrupt official',
   costs: {
@@ -166,6 +176,7 @@ const outsideWorkers = [{
     attack: 5,
     defense: 5,
   },
+  buildTime: 6000,
 }];
 const resAffectedBy = {
   burgers: 'burger flipper',
@@ -213,17 +224,28 @@ const defaultWorkers = {
   }],
 };
 
-const kitchenTitles = kitchenWorkers.map(w => w.title);
-const outsideTitles = outsideWorkers.map(w => w.title);
 
+const workerTypes = [
+  'burger flipper',
+  'fry fryer',
+  'drink pourer',
+  'server',
+  'bouncer',
+  'mobster',
+  'punk',
+  'thug',
+  'spy',
+  'inspector',
+  'corrupt official',
+];
 
 export { resAffectedBy, defaultWorkers };
 export default {
+  allWorkers: outsideWorkers.concat(kitchenWorkers),
   defaultWorkers,
-  kitchenTitles,
   kitchenWorkers,
-  outsideTitles,
   outsideWorkers,
   resAffectedBy,
+  workerTypes,
 };
 
