@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-12">
-    <button ng-if="gr.canTrainAny()" ng-click="gr.trainingActive = !gr.trainingActive" class="btn btn-primary">Train workers</button>
+    <button ng-if="gr.canTrainAny()" ng-click="gr.trainingActive = !gr.trainingActive" class="btn btn-primary">Worker training</button>
     <div ng-if="gr.canControlMoney()" class="pull-right inline-flex">
       <input class="inline-range" type="range" id="soldPercent" min="0" max="100" value="{{gr.prodSold}}" ng-model="gr.prodSold" ng-change="gr.prodSoldChange(gr.prodSold)">
       <span> {{gr.prodSold}}% of your produced food is sold</span>
@@ -9,10 +9,10 @@
       <form class="form" name="form" ng-submit="gr.hireAttempt(form)" novalidate>
         <div class="col-sm-12 well well-lg">
           <h5>Kitchen workers</h5>
-          <div ng-repeat="worker in gr.kitchenWorkerData" ng-if="gr.canTrain(worker.requires)" class="row worker-data" ng-switch="gr.canAfford(worker)">
+          <div ng-repeat="worker in gr.kitchenWorkerData" ng-if="gr.canTrain(worker.requires)" class="row worker" ng-switch="gr.canAfford(worker)">
             <div class="col-md-4">{{worker.title}}</div>
             <div class="col-md-3">Owned {{gr.restaurantWorkers.kitchen[worker.title]}}</div>
-            <div class="col-md-5">
+            <div class="col-md-5 text-right resource-column">
               <span class="time">{{timeLeft(worker.buildTime)}}</span>
               <span class="resource res-small"><i class="res fa fa-money"></i> {{worker.costs.megabucks}}</span>
               <span class="resource res-small"><i class="res res-burgers"></i> {{worker.costs.burgers}}</span>
@@ -27,10 +27,10 @@
           </div>
 
           <h5>Outside workers</h5>
-          <div ng-repeat="worker in gr.outsideWorkerData" ng-if="gr.canTrain(worker.requires)" class="row worker-data" ng-switch="gr.canAfford(worker)">
+          <div ng-repeat="worker in gr.outsideWorkerData" ng-if="gr.canTrain(worker.requires)" class="row worker" ng-switch="gr.canAfford(worker)">
             <div class="col-md-4">{{worker.title}}</div>
             <div class="col-md-3">Owned {{gr.restaurantWorkers.outside[worker.title]}}</div>
-            <div class="col-md-5">
+            <div class="col-md-5 text-right resource-column">
               <span class="time">{{timeLeft(worker.buildTime)}}</span>
               <span class="resource res-small"><i class="res fa fa-money"></i> {{worker.costs.megabucks}}</span>
               <span class="resource res-small"><i class="res res-burgers"></i> {{worker.costs.burgers}}</span>
@@ -42,8 +42,10 @@
               <input class="recruit-input" type="number" name="{{worker.title}}" min="0" ng-model="gr.recruit[worker.title]">
             </div>
           </div>
-          <div class="text-danger margin-bottom-two" ng-show="gr.recruitErrorMessage.length">{{gr.recruitErrorMessage}}</div>
-          <button type="submit" class="btn btn-primary">Recruit</button>
+          <div class="pull-right margin-top-two">
+            <div class="error-message-inline" ng-show="!form.$valid && gr.recruitErrorMessage.length">{{gr.recruitErrorMessage}}</div>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Recruit</button>
+          </div>
         </div>
       </form>
     </div>
@@ -52,8 +54,8 @@
     <div ng-show="gr.events.building.length">
       <h4>Building queue</h4>
       <div ng-repeat="item in gr.events.building" class="row">
-        <div class="col-sm-4">{{item.target}}</div>
-        <div class="col-sm-4">{{item.ends}}</div>
+        <div class="col-sm-3">{{item.target}}</div>
+        <div class="col-sm-3">{{item.ends}}</div>
         <div class="col-sm-3">{{timeLeft(item.left)}}</div>
         <!-- <div class="col-sm-1">x</div> -->
       </div>
@@ -77,14 +79,16 @@
         <span class="building-level">{{building.level}}</span>
         <span ng-show="building.queued">(+{{building.queued}})</span>
       </div>
-      <div ng-if="gr.upgradeable(building)" ng-switch="gr.canAfford(building)" class="col-sm-5 text-right">
+      <div ng-if="gr.upgradeable(building)" ng-switch="gr.canAfford(building)" class="col-sm-5 text-right resource-column">
         <span class="time">{{timeLeft(building.buildTime)}}</span>
         <span class="resource res-small"><i class="res fa fa-money"></i> {{building.costs.megabucks}}</span>
         <span class="resource res-small"><i class="res res-burgers"></i> {{building.costs.burgers}}</span>
         <span class="resource res-small"><i class="res res-fries"></i> {{building.costs.fries}}</span>
         <span class="resource res-small"><i class="res res-drinks"></i> {{building.costs.drinks}}</span>
         <span class="resource res-small"><i class="res fa fa-users"></i> {{building.costs.loyals}}</span>
-        <span ng-switch-when="true" class="btn btn-xs building-upgrade btn-primary" ng-click="gr.upgrade(building)">Upgrade</span>
+        <span ng-switch-when="true" class="btn btn-xs building-upgrade btn-primary" ng-click="gr.upgrade(building)">
+          <i class="fa fa-wrench" aria-hidden="true"></i> Build
+        </span>
         <span ng-switch-when="false">Can't afford</span>
       </div>
       <div uib-collapse="!building.details.active" class="col-sm-12 margin-top-two">

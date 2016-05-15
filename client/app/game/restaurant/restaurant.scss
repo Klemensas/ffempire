@@ -12,6 +12,21 @@
 .margin-bottom-two {
   margin-bottom: 2vh;
 }
+.error-message-inline {
+  color: $error-color;
+  display: inline-block;
+  margin: 0 2vh;
+}
+
+.worker, .building {
+  display: flex;
+  align-items: center;
+  .resource-column {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+}
 
 input.inline-range {
   display: inline-block;
