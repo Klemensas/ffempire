@@ -121,9 +121,8 @@ export function updateQueues(req, res) {
     return Restaurant.findById(req.params.id)
       .then(handleEntityNotFound(res))
       .then(rest => {
-        const oldRest = Object.assign({}, rest);
-        rest = events.checkQueueAndUpdate(rest);
-        if (oldRest.soonest === rest.soonest) {
+        if (rest.events.soonest <= Date.now()) {
+          rest = events.checkQueueAndUpdate(rest);
           rest = updateRes(rest);
           return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
           .then(r => {
@@ -136,7 +135,7 @@ export function updateQueues(req, res) {
         return res.status(401).end();
       });
   }
-  res.status(401).end();
+  return res.status(401).end();
 }
 
 // Post, attempt to upgrade a building
@@ -165,7 +164,6 @@ export function upgradeBuilding(req, res) {
           return res.status(401).end();
         }
         rest = events.queueBuilding(rest, building, targetLevel);
-        // rest.set(`buildings.${buildingIndex}.level`, ++building.level);
         return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
         .then(r => {
           if (r.nModified) {

@@ -4,7 +4,10 @@ import buildings from '../../config/game/buildings';
 
 // Gets worker data
 export function index(req, res) {
-  return res.json(workers);
+  return res.json({
+    kitchenWorkers: workers.kitchenWorkerArray,
+    outsideWorkers: workers.outsideWorkerArray,
+  });
 }
 
 function isOwner(user, restaurantId) {
