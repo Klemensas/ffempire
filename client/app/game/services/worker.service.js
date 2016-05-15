@@ -2,23 +2,29 @@
   function Worker($http, $q, Restaurant, Building) {
     let kitchenWorkers;
     let outsideWorkers;
+    let allWorkers;
 
     function canTrain(reqs) {
       if (!!reqs) {
         return Building.meetsRequirements(reqs);
       }
-      return !kitchenWorkers ? false :
-        kitchenWorkers.some(w => Building.meetsRequirements(w.requires));
+      return !this.kitchenWorkers ? false :
+        this.kitchenWorkers.some(w => Building.meetsRequirements(w.requires));
     }
 
     function getWorkerData() {
-      if (!!kitchenWorkers) {
+      if (!!this.kitchenWorkers) {
         return $q.when({ kitchenWorkers, outsideWorkers });
       }
       return $http.get('/api/worker').then(response => {
-        kitchenWorkers = response.data.kitchenWorkers;
-        outsideWorkers = response.data.outsideWorkers;
-        return { kitchenWorkers, outsideWorkers };
+        this.allWorkers = response.data.allWorkers;
+        this.kitchenWorkers = response.data.kitchenWorkers;
+        this.outsideWorkers = response.data.outsideWorkers;
+        return {
+          allWorkers: this.allWorkers,
+          kitchenWorkers: this.kitchenWorkers,
+          outsideWorkers: this.outsideWorkers,
+        };
       });
     }
 
@@ -37,6 +43,7 @@
     }
 
     return {
+      allWorkers,
       canTrain,
       getWorkerData,
       hireAttempt,

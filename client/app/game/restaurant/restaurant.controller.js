@@ -102,12 +102,33 @@
       return this.Worker.canTrain(requirements);
     }
 
+    totalCost(workers) {
+      const costs = {
+        megabucks: 0,
+        burgers: 0,
+        fries: 0,
+        drinks: 0,
+        loyals: 0,
+      };
+      Object.keys(workers).forEach(w => {
+        costs.megabucks += this.Worker.allWorkers[w].costs.megabucks * workers[w];
+        costs.burgers += this.Worker.allWorkers[w].costs.burgers * workers[w];
+        costs.fries += this.Worker.allWorkers[w].costs.fries * workers[w];
+        costs.drinks += this.Worker.allWorkers[w].costs.drinks * workers[w];
+        costs.loyals += this.Worker.allWorkers[w].costs.loyals * workers[w];
+      });
+      return costs;
+    }
+
     hireAttempt(form) {
       if (form.$valid) {
+        if (!this.Restaurant.canAfford(this.totalCost(this.recruit))) {
+          form.$valid = false;
+          return this.recruitErrorMessage = 'Cannot afford.';
+        }
         return this.Worker.hireAttempt(this.recruit).then(r => this.updateView(r)).catch(e => { console.log('error', e); });
       }
       this.recruitErrorMessage = 'Hiring error.';
-      console.log(form);
     }
 
     hireWorker(worker) {
