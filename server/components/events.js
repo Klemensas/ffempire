@@ -86,9 +86,9 @@ function queueBuilding(rest, building, level) {
   return rest;
 }
 
-function queueRecruits(rest, recruits) {
+function queueRecruits(rest, recruits, filteredUnits) {
   // Sort necessary if queueing multiple units and we'd like to queue in a non default order
-  const targets = Object.keys(recruits).sort((a, b) => workers.workerTypes.indexOf(a) - workers.workerTypes.indexOf(b));
+  const targets = filteredUnits.sort((a, b) => workers.workerTypes.indexOf(a) - workers.workerTypes.indexOf(b));
   const time = Date.now();
   targets.forEach(t => {
     const unit = workers.allWorkers[t];

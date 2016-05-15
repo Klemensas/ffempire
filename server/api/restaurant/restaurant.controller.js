@@ -181,13 +181,12 @@ export function upgradeBuilding(req, res) {
 export function setMoneyProd(req, res) {
   if (isOwner(req.user, req.params.id) && typeof req.body.percent === 'string') {
     const percent = req.body.percent;
-    Restaurant.findById(req.params.id)
+    return Restaurant.findById(req.params.id)
       .then(handleEntityNotFound(res))
       .then(rest => {
         if (canSetMoneyProd(rest)) {
           rest = updateRes(rest);
           rest.moneyPercent = percent;
-          rest.save().then(r => res.json(r));
           return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
           .then(r => {
             if (r.nModified) {
@@ -200,7 +199,7 @@ export function setMoneyProd(req, res) {
       .catch(handleError(res));
   }
   // TODO: error, non user restaurant
-  res.status(401).end();
+  return res.status(401).end();
 }
 
 function canSetMoneyProd(rest) {

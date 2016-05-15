@@ -7,6 +7,7 @@ import _ from 'lodash';
 // Gets worker data
 export function index(req, res) {
   return res.json({
+    allWorkers: workers.allWorkers,
     kitchenWorkers: workers.kitchenWorkerArray,
     outsideWorkers: workers.outsideWorkerArray,
   });
@@ -30,9 +31,8 @@ function handleEntityNotFound(res) {
 export function hireWorkers(req, res) {
   const data = req.body;
   if (data.rest && isOwner(req.user, data.rest) && data.workers) {
-    const targets = Object.keys(data.workers);
-    const correctValues = targets.every(t => !!workers.allWorkers[t]);
-    if (correctValues) {
+    const filteredUnits = Object.keys(data.workers).filter(t => !!workers.allWorkers[t] && Number(data.workers[t]) > 0);
+    if (filteredUnits.length) {
       return Restaurant.findById(data.rest)
         .then(handleEntityNotFound(res))
           .then(rest => {
@@ -43,7 +43,7 @@ export function hireWorkers(req, res) {
               drinks: 0,
               loyals: 0,
             };
-            const canBuild = targets.every(t => {
+            const canBuild = filteredUnits.every(t => {
               const workerData = workers.allWorkers[t];
               Object.keys(workerData.costs).forEach(k => costs[k] += workerData.costs[k] * data.workers[t]);
               return Object.keys(workerData.requires).every(k => rest.buildings.find(b => b.title === k).level >= workerData.requires[k]);
@@ -54,7 +54,7 @@ export function hireWorkers(req, res) {
               return rest.resources[r] >= 0;
             });
             if (canBuild && canAfford) {
-              rest = events.queueRecruits(rest, data.workers);
+              rest = events.queueRecruits(rest, data.workers, filteredUnits);
               Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
                 .then(r => {
                   if (r.nModified) {
