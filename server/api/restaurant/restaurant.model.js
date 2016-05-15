@@ -81,7 +81,9 @@ const RestaurantSchema = new Schema({
       ends: Date,
     }],
     unit: [{
+      target: String,
       amount: Number,
+      produced: Number,
       queued: Date,
       ends: Date,
     }],
