@@ -9,6 +9,9 @@
 .margin-top-two {
   margin-top: 2vh;
 }
+.margin-bottom-two {
+  margin-bottom: 2vh;
+}
 
 input.inline-range {
   display: inline-block;
@@ -18,4 +21,8 @@ input.inline-range {
 
 .inline-flex {
   display: inline-flex;
+}
+
+.recruit-input {
+  max-width: 60px;
 }

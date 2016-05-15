@@ -22,8 +22,8 @@
       });
     }
 
-    function hireAttempt(worker) {
-      return $http.post('/api/worker/hireWorker', { rest: Restaurant.activeRestId, worker: worker.title })
+    function hireAttempt(workers) {
+      return $http.post('/api/worker/hireWorker', { rest: Restaurant.activeRestId, workers })
         .then(res => {
           console.log('res');
 

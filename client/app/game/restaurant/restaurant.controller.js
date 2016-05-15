@@ -17,6 +17,8 @@
       this.Building = Building;
       this.Worker = Worker;
 
+      this.recruitErrorMessage = '';
+
       let checkingQueue = false;
       function changeProdSold(percent) {
         if (this.canControlMoney()) {
@@ -34,12 +36,10 @@
       this.monitorQueues = function () {
         const time = Date.now();
         let expired;
-        this.events.building.forEach(e => {
-          e.left = Math.ceil((new Date(e.ends) - time) / 1000);
-          if (e.left < 0) {
-            expired = true;
-          }
-        });
+
+        this.events.building.forEach(addLeftTime);
+        this.events.unit.forEach(addLeftTime);
+
         if (expired && !checkingQueue) {
           checkingQueue = true;
           this.Restaurant.checkQueue().then(r => {
@@ -49,6 +49,14 @@
         }
         if (this.events.soonest) {
           $timeout(this.monitorQueues.bind(this), 1000);
+        }
+
+        function addLeftTime(el) {
+          el.left = Math.ceil((new Date(el.ends) - time) / 1000);
+          if (el.left < 0) {
+            expired = true;
+          }
+          return el;
         }
       };
 
@@ -92,6 +100,14 @@
 
     canTrain(requirements) {
       return this.Worker.canTrain(requirements);
+    }
+
+    hireAttempt(form) {
+      if (form.$valid) {
+        return this.Worker.hireAttempt(this.recruit).then(r => this.updateView(r)).catch(e => { console.log('error', e); });
+      }
+      this.recruitErrorMessage = 'Hiring error.';
+      console.log(form);
     }
 
     hireWorker(worker) {
