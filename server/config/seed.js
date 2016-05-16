@@ -9,6 +9,7 @@ import Message from '../api/message/message.model';
 import User from '../api/user/user.model';
 import Restaurant from '../api/restaurant/restaurant.model';
 import buildings from './game/buildings';
+import { defaultWorkers } from './game/workers';
 
 
 // Loop through 100*100 fields generating restaurants at %
@@ -21,22 +22,7 @@ for (let i = 1; i < 100; i++) {
         name: `Restaurant #${i * j}`,
         location: [i, j],
         buildings: buildings.defaultBuildings,
-        workers: {
-          kitchen: [{
-            title: 'burger flipper',
-            count: 0,
-          }, {
-            title: 'fry fryer',
-            count: 0,
-          }, {
-            title: 'drink pourer',
-            count: 0,
-          }, {
-            title: 'server',
-            count: 0,
-          },
-          ],
-        },
+        workers: defaultWorkers,
       });
     }
   }
@@ -92,20 +78,20 @@ function populateUsers() {
   return;
 }
 
-// User.find({}).remove().then(() => {
-//   Restaurant.find({}).remove()
-//     .then(() => {
-//       restaurants.forEach((rest, i) => {
-//         Restaurant.create(rest)
-//           .then(r => {
-//             savedRestaurants.push(r);
-//             if (i === restaurants.length - 1) {
-//               populateUsers();
-//             }
-//             return true;
-//           });
-//       });
-//       return true;
-//     });
-//   return true;
-// });
+User.find({}).remove().then(() => {
+  Restaurant.find({}).remove()
+    .then(() => {
+      restaurants.forEach((rest, i) => {
+        Restaurant.create(rest)
+          .then(r => {
+            savedRestaurants.push(r);
+            if (i === restaurants.length - 1) {
+              populateUsers();
+            }
+            return true;
+          });
+      });
+      return true;
+    });
+  return true;
+});
