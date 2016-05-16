@@ -75,7 +75,7 @@
 
     updateView(r) {
       this.events = this.Restaurant.activeRest.events;
-      const monitor = this.events.soonest === null;
+      const monitor = this.events.soonest !== null;
 
       this.Building.mapBuildingValues();
       this.buildings = this.Restaurant.activeRest.buildings;
