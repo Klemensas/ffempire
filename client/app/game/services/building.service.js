@@ -3,7 +3,9 @@
     const buildTimes = {};
     const costs = {};
     const details = {};
+    const points = {};
     const requirements = {};
+    let currentPoints = 0;
     let queuedLevels = {};
 
     function mapBuildingValues(costs = this.costs, buildTimes = this.buildTimes) {
@@ -24,15 +26,25 @@
         .then(res => {
           this.buildTimes = res.data.buildTimes;
           this.costs = res.data.costs;
-          this.requirements = res.data.requirements;
           this.details = res.data.details;
+          this.points = res.data.points;
+          this.requirements = res.data.requirements;
           mapBuildingValues(this.costs, this.buildTimes);
+          this.currentPoints = calculatePoints(this.points);
           return this;
         })
         .catch(err => {
           console.error(err);
           throw 'Server error';
         });
+    }
+
+    function calculatePoints(points = this.points) {
+      let total = 0;
+      for (const building of Restaurant.activeRest.buildings) {
+        total += points[building.title][building.level];
+      }
+      return total;
     }
 
     function upgradeAttempt(building = {}) {
@@ -74,6 +86,8 @@
 
     return {
       buildingCosts,
+      calculatePoints,
+      currentPoints,
       costs,
       details,
       mapBuildingValues,

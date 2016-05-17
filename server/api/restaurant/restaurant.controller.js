@@ -110,6 +110,7 @@ export function getBuildings(req, res) {
   const buildingData = {
     buildTimes: buildings.buildTimes,
     costs: buildings.costsNamed,
+    points: buildings.points,
     requirements: buildings.requirements,
     details: buildings.details,
   };

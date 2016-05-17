@@ -6,6 +6,7 @@
 
       this.buildings = Restaurant.activeRest.buildings;
       this.events = Restaurant.activeRest.events;
+      this.points = Building.currentPoints;
 
       this.restaurantWorkers = Restaurant.workers;
       this.buildingDetails = Building.details;
@@ -78,6 +79,7 @@
       const monitor = this.events.soonest !== null;
 
       this.Building.mapBuildingValues();
+      this.points = this.Building.calculatePoints();
       this.buildings = this.Restaurant.activeRest.buildings;
       this.restaurantWorkers = this.Restaurant.workers;
 
