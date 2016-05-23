@@ -8,6 +8,7 @@ angular.module('faster')
         authenticate: true,
         resolve: {
           buildingPromise: ['Building', Building => Building.getBuildings()],
+          workerPromise: ['Worker', Worker => Worker.getWorkerData()],
         },
         controller: 'GameViewController',
         controllerAs: 'gv',

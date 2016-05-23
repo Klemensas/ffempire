@@ -30,4 +30,7 @@ angular.module('faster', [
       ];
       return timeArray.map(v => v < 10 ? `0${v}` : v).join(':');
     };
+    $rootScope.formatDate = function (time) {
+      return new Date(time);
+    };
   });

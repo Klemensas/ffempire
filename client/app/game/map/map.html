@@ -1,33 +1,56 @@
 <div class="container">
-  <div class="map-wrapper" data-row-size="{{gm.rowSize}}" data-column-size="{{gm.rowSize}}">
-    <div class="map-axies">
-      <div class="x-axis">
-        <div ng-repeat="value in gm.xAxis">{{value}}</div>
-      </div>
-      <div class="y-axis">
-        <div ng-repeat="value in gm.yAxis">{{value}}</div>
-      </div>
-    </div>
-    <div id="map-container">
-      <div ng-repeat="row in gm.displayed" class="map-row">
-        <div ng-repeat="col in row" data-field="{{col.field}}" class="map-field">
-          <div ng-if="col.hasOwnProperty('owner')" class="restaurant {{gm.isOwned(col) ? 'owned' : ''}}">
-            <div ng-if="!gm.isOwned(col)" class="restaurant-interaction">
-              <a href="a" class="profile"><i class="fa fa-user"></i></a>
-              <a href="b" class="message"><i class="fa fa-envelope-o"></i></a>
-              <a href="c" class="attack"><i class="fa fa-bolt"></i></a>
-              <a href="d" class="spy"><i class="fa fa-user-secret"></i></a>
-              <a href="e" class="placeholder"><i class="fa fa-hourglass-o"></i></a>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="map-wrapper" data-row-size="{{gm.rowSize}}" data-column-size="{{gm.rowSize}}">
+        <div class="map-axies">
+          <div class="x-axis">
+            <div ng-repeat="value in gm.xAxis">{{value}}</div>
+          </div>
+          <div class="y-axis">
+            <div ng-repeat="value in gm.yAxis">{{value}}</div>
+          </div>
+        </div>
+        <div id="map-container">
+          <div ng-repeat="row in gm.displayed" class="map-row">
+            <div ng-repeat="col in row" data-field="{{col.field}}" class="map-field">
+              <div ng-if="col.hasOwnProperty('owner')" class="restaurant {{gm.isOwned(col) ? 'owned' : ''}}">
+                <div ng-if="!gm.isOwned(col)" class="restaurant-interaction">
+                  <a class="profile"><i class="fa fa-user"></i></a>
+                  <a class="message"><i class="fa fa-envelope-o"></i></a>
+                  <a class="attack" ng-click="gm.sendUnits(col)"><i class="fa fa-bolt"></i></a>
+                  <a class="spy"><i class="fa fa-user-secret"></i></a>
+                  <a class="placeholder"><i class="fa fa-hourglass-o"></i></a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        <div class="map-nav">
+          <div class="up" ng-click="gm.mapScroll([-1, 0])"><i class="fa fa-chevron-up"></i></div>
+          <div class="right" ng-click="gm.mapScroll([0, 1])"><i class="fa fa-chevron-right"></i></div>
+          <div class="down" ng-click="gm.mapScroll([1, 0])"><i class="fa fa-chevron-down"></i></div>
+          <div class="left" ng-click="gm.mapScroll([0, -1])"><i class="fa fa-chevron-left"></i></div>
+        </div>
       </div>
     </div>
-    <div class="map-nav">
-      <div class="up" ng-click="gm.mapScroll([-1, 0])"><i class="fa fa-chevron-up"></i></div>
-      <div class="right" ng-click="gm.mapScroll([0, 1])"><i class="fa fa-chevron-right"></i></div>
-      <div class="down" ng-click="gm.mapScroll([1, 0])"><i class="fa fa-chevron-down"></i></div>
-      <div class="left" ng-click="gm.mapScroll([0, -1])"><i class="fa fa-chevron-left"></i></div>
+    <div class="col-lg-12" ng-show="gm.movement.length">
+      <h4>Worker movement</h4>
+      <div class="row margin-top-two" ng-repeat="event in gm.movement | orderBy: '+ends'">
+        <!-- <div class="row"> -->
+          <div class="col-xs-2">
+            <i class="fa fa-{{event.action}} fa-lg" aria-hidden="true"></i> {{event.action}}
+          </div>
+          <div class="col-xs-4">
+            <i class="fa fa-hourglass-half" aria-hidden="true"></i> {{timeLeft(event.left)}}
+          </div>
+          <div class="col-xs-4">
+            <i class="fa fa-clock-o" aria-hidden="true"></i> {{event.ends}}
+          </div>
+          <div class="col-xs-2">
+            <i class="fa fa-map-marker" aria-hidden="true"></i> [{{event.target.join(', ')}}]
+          </div>
+        <!-- </div> -->
+      </div>
     </div>
   </div>
 </div>

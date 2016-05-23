@@ -57,4 +57,31 @@
     margin-right: 5px;
   }
 }
+.troop-movement {
+  margin-top: -3vh;
+  margin-bottom: 3vh;
+  .container {
+    padding: 2vh 0;
+    text-transform: uppercase;
+    .title {
+      font-size: 3vh;
+      font-weight: 700;
+      .btn {
+        margin-left: 1vh;
+      }
+    }
+  }
+}
 
+.incoming-event {
+  & > div {
+    padding: 1vh;
+  }
+  &.bg-attack > div { @extend .bg-danger; }
+  &.bg-support > div { @extend .bg-success; }
+  
+}
+.fa {
+  &.fa-attack { @extend .fa-bomb; }
+  &.fa-support { @extend .fa-shield; }
+}
