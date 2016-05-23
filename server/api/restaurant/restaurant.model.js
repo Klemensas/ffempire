@@ -60,7 +60,14 @@ const RestaurantSchema = new Schema({
     }],
     outside: [{
       title: String,
-      count: Number,
+      count: {
+        type: Number,
+        default: 0,
+      },
+      moving: {
+        type: Number,
+        default: 0,
+      },
     }],
   },
   info: String,
@@ -93,6 +100,14 @@ const RestaurantSchema = new Schema({
       ends: Date,
     }],
     movement: [{
+      targetId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Restaurant',
+        default: null,
+      },
+      action: String,
+      target: Array,
+      units: {},
       queued: Date,
       ends: Date,
     }],
