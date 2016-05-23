@@ -1,11 +1,11 @@
 const kitchenWorkers = {
   'burger flipper': {
     costs: {
-      megabucks: 10,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 5,
+      burgers: 1,
+      fries: 4,
+      drinks: 4,
+      loyals: 2,
     },
     requires: {
       kitchen: 2,
@@ -14,11 +14,11 @@ const kitchenWorkers = {
   },
   'fry fryer': {
     costs: {
-      megabucks: 15,
-      burgers: 0,
-      fries: 0,
-      drinks: 10,
-      loyals: 3,
+      megabucks: 5,
+      burgers: 4,
+      fries: 1,
+      drinks: 4,
+      loyals: 2,
     },
     requires: {
       kitchen: 2,
@@ -27,11 +27,11 @@ const kitchenWorkers = {
   },
   'drink pourer': {
     costs: {
-      megabucks: 1,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 5,
+      burgers: 4,
+      fries: 4,
+      drinks: 1,
+      loyals: 2,
     },
     requires: {
       kitchen: 2,
@@ -40,11 +40,11 @@ const kitchenWorkers = {
   },
   'server': {
     costs: {
-      megabucks: 0,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 10,
+      burgers: 10,
+      fries: 10,
+      drinks: 10,
+      loyals: 1,
     },
     requires: {
       kitchen: 5,
@@ -55,29 +55,29 @@ const kitchenWorkers = {
 const outsideWorkers = {
   'bouncer': {
     costs: {
-      megabucks: 0,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 4,
+      burgers: 20,
+      fries: 8,
+      drinks: 10,
+      loyals: 2,
     },
     requires: {
       kitchen: 5,
     },
     speed: 10,
     combat: {
-      attack: 1,
+      attack: 2,
       defense: 10,
     },
     buildTime: 900,
   },
   'mobster': {
     costs: {
-      megabucks: 0,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 10,
+      burgers: 17,
+      fries: 30,
+      drinks: 10,
+      loyals: 4,
     },
     requires: {
       kitchen: 5,
@@ -91,11 +91,11 @@ const outsideWorkers = {
   },
   'punk': {
     costs: {
-      megabucks: 0,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 3,
+      burgers: 10,
+      fries: 12,
+      drinks: 15,
+      loyals: 2,
     },
     requires: {
       kitchen: 5,
@@ -103,17 +103,17 @@ const outsideWorkers = {
     speed: 20,
     combat: {
       attack: 10,
-      defense: 0,
+      defense: 3,
     },
     buildTime: 700,
   },
   'thug': {
     costs: {
-      megabucks: 0,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 8,
+      burgers: 22,
+      fries: 22,
+      drinks: 10,
+      loyals: 5,
     },
     requires: {
       kitchen: 5,
@@ -127,14 +127,14 @@ const outsideWorkers = {
   },
   'spy': {
     costs: {
-      megabucks: 0,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 100,
+      burgers: 20,
+      fries: 20,
+      drinks: 20,
+      loyals: 10,
     },
     requires: {
-      kitchen: 5,
+      kitchen: 7,
     },
     speed: 25,
     combat: {
@@ -145,14 +145,14 @@ const outsideWorkers = {
   },
   'inspector': {
     costs: {
-      megabucks: 0,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 500,
+      burgers: 100,
+      fries: 80,
+      drinks: 50,
+      loyals: 20,
     },
     requires: {
-      kitchen: 5,
+      kitchen: 7,
     },
     speed: 10,
     combat: {
@@ -163,14 +163,14 @@ const outsideWorkers = {
   },
   'corrupt official': {
     costs: {
-      megabucks: 0,
-      burgers: 0,
-      fries: 0,
-      drinks: 0,
-      loyals: 0,
+      megabucks: 2000,
+      burgers: 4000,
+      fries: 5000,
+      drinks: 4000,
+      loyals: 100,
     },
     requires: {
-      kitchen: 5,
+      kitchen: 7,
     },
     speed: 10,
     combat: {
