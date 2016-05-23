@@ -1,7 +1,8 @@
 (function() {
   class MapController {
-    constructor($http, $scope, Auth, Restaurant) {
+    constructor($http, $scope, $uibModal, $timeout, Auth, Restaurant) {
       this.user = Auth.getCurrentUser();
+      this.movement = Restaurant.activeRest.events.movement;
       this.Restaurant = Restaurant;
 
       this.mapSize = 800;
@@ -21,6 +22,48 @@
 
       this.xAxis = _.range(this.mapLocation[1], this.mapLocation[1] + this.rowSize);
       this.yAxis = _.range(this.mapLocation[0], this.mapLocation[0] + this.rowSize);
+
+      this.modal = $uibModal;
+      this.scope = $scope;
+
+      let checkingQueue = false;
+      this.monitorMovement = function () {
+        const time = Date.now();
+        let expired;
+        this.movement.forEach(addLeftTime);
+
+        if (expired && !checkingQueue) {
+          checkingQueue = true;
+          this.Restaurant.checkQueue().then(r => {
+            checkingQueue = false;
+            this.updateView(r);
+          });
+        }
+        if (this.movement.length) {
+          $timeout(this.monitorMovement.bind(this), 1000);
+        }
+
+        function addLeftTime(el, i, array) {
+          el.left = Math.ceil((new Date(el.ends) - time) / 1000);
+          if (el.left < 0) {
+            expired = true;
+            array.splice(i, 1);
+          }
+          return el;
+        }
+      };
+
+
+      if (this.movement.length) {
+        this.monitorMovement();
+      }
+    }
+
+    updateView(r) {
+      this.movement = this.Restaurant.activeRest.events.movement;
+      if (this.movement.length) {
+        this.monitorMovement();
+      }
     }
 
     mapScroll(position) {
@@ -44,6 +87,25 @@
         return false;
       }
       return building.owner._id === this.user._id;
+    }
+
+    sendUnits(restaurant) {
+      const modalInstance = this.modal.open({
+        animation: true,
+        templateUrl: 'app/game/modals/movement.template.html',
+        controller: 'MovementController',
+        controllerAs: 'mv',
+        bindToController: true,
+        size: 'md',
+        resolve: { target: restaurant },
+      });
+      modalInstance.result.then(rest => {
+        const monitoring = this.movement.length;
+        this.movement = rest.events.movement;
+        if (!monitoring) {
+          this.monitorMovement();
+        }
+      });
     }
   }
   angular.module('faster')

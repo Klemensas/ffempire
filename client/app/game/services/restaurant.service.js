@@ -6,6 +6,7 @@
     let workers = {
       kitchen: {},
       outside: {},
+      availableOutside: {},
     };
 
     let production = {};
@@ -22,6 +23,9 @@
     };
     const resourceNames = ['megabucks', 'loyals', 'burgers', 'fries', 'drinks'];
     const fieldTypes = 7;
+    const movement = {
+      incoming: [],
+    };
 
     function getMapRestaurants() {
       if (this.mapRestaurantLocs.length !== 0) {
@@ -30,9 +34,10 @@
       console.time('Restaurant list start');
       return $http.get('/api/restaurant/map').then(response => {
         this.mapRestaurants = {};
-        response.data.map(el => {
+        response.data.forEach(el => {
           this.mapRestaurants[el.location.join()] = {
             owner: el.owner,
+            id: el._id,
           };
         });
         this.mapRestaurantLocs = Object.keys(this.mapRestaurants);
@@ -80,9 +85,19 @@
       });
     }
 
+    function updateIncoming() {
+      return $http.get(`api/restaurant/${this.activeRestId}/updateIncoming`).then(res => {
+        this.updateRest(res.data);
+        return this.activeRest;
+      });
+    }
+
     function mapWorkers(workerArray) {
       workerArray.kitchen.forEach(w => workers.kitchen[w.title] = w.count);
-      workerArray.outside.forEach(w => workers.outside[w.title] = w.count);
+      workerArray.outside.forEach(w => {
+        workers.outside[w.title] = w.count;
+        workers.availableOutside[w.title] = w.count - w.moving;
+      });
       production = calculateProd(baseProd, workerBase, workers.kitchen, activeRest.moneyPercent);
     }
 
@@ -93,10 +108,13 @@
         map[i] = [];
         for (let j = 0; j < size; j++) {
           const loc = `${location[0] + i},${location[1] + j}`;
-          if (typeof this.mapRestaurants[loc] !== 'undefined') {
+          const rest = this.mapRestaurants[loc];
+          if (typeof rest !== 'undefined') {
             map[i].push({
-              owner: this.mapRestaurants[loc].owner,
+              id: rest.id,
+              owner: rest.owner,
               field: 1,
+              location: loc,
             });
             continue;
           }
@@ -133,8 +151,13 @@
     }
 
     function updateRest(data) {
-      this.activeRest = data;
-      mapWorkers(this.activeRest.workers);
+      if (this) {
+        this.activeRest = data;
+        mapWorkers(this.activeRest.workers);
+        return;
+      }
+      activeRest = data;
+      mapWorkers(activeRest.workers);
     }
 
     function canAfford(costs) {
@@ -142,7 +165,35 @@
       return resourceNames.every(r => costs[r] <= res[r]);
     }
 
+    function eventReceive(e) {
+      const data = JSON.parse(e.data);
+      if (data.movement) {
+        movement.incoming = movement.incoming.concat(data.movement);
+        console.log('movement', movement.incoming);
+      } else if (data.newMovement) {
+        movement.incoming.push(data.newMovement);
+      } else if (data.rest) {
+        // Dirty stuff  
+        window.location.reload();
+      } else {
+        console.log('othr event', e.data)
+      }
+    }
+
+    function restaurantEvents() {
+      const source = new EventSource(`/api/restaurant/${activeRestId}/events?access_token=${Auth.getToken()}`);
+
+      source.addEventListener('message', eventReceive, false);
+      source.addEventListener('error', (e) => {
+        console.log('err', e)
+        if (e.readyState === EventSource.CLOSED) {
+          restaurantEvents();
+        }
+      }, false);
+    }
+
     setActiveRest();
+    restaurantEvents();
 
     return {
       activeRest,
@@ -152,6 +203,7 @@
       checkQueue,
       displayedRestaurants,
       getMapRestaurants,
+      movement,
       mapRestaurants,
       mapRestaurantLocs,
       modifyRes,
@@ -159,6 +211,7 @@
       resourceNames,
       setActiveRest,
       setMoneyProd,
+      updateIncoming,
       updateRest,
       workers,
     };

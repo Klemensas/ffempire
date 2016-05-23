@@ -7,12 +7,11 @@
       this.buildings = Restaurant.activeRest.buildings;
       this.events = Restaurant.activeRest.events;
       this.points = Building.currentPoints;
-
       this.restaurantWorkers = Restaurant.workers;
       this.buildingDetails = Building.details;
       this.prodSold = Restaurant.activeRest.moneyPercent;
-      this.kitchenWorkerData = {};
-      this.outsideWorkerData = {};
+      this.kitchenWorkerData = Worker.kitchenWorkers;
+      this.outsideWorkerData = Worker.outsideWorkers;
 
       this.Restaurant = Restaurant;
       this.Building = Building;
@@ -40,6 +39,7 @@
 
         this.events.building.forEach(addLeftTime);
         this.events.unit.forEach(addLeftTime);
+        // this.events.movement.forEach(addLeftTime);
 
         if (expired && !checkingQueue) {
           checkingQueue = true;
@@ -66,12 +66,6 @@
       if (this.events.soonest) {
         this.monitorQueues();
       }
-
-      this.Worker.getWorkerData()
-        .then((workers) => {
-          this.kitchenWorkerData = workers.kitchenWorkers;
-          this.outsideWorkerData = workers.outsideWorkers;
-        });
     }
 
     updateView(r) {

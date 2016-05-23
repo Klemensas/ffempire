@@ -2,6 +2,7 @@
   function Worker($http, $q, Restaurant, Building) {
     let kitchenWorkers;
     let outsideWorkers;
+    let outsideWorkerMap;
     let allWorkers;
 
     function canTrain(reqs) {
@@ -20,6 +21,7 @@
         this.allWorkers = response.data.allWorkers;
         this.kitchenWorkers = response.data.kitchenWorkers;
         this.outsideWorkers = response.data.outsideWorkers;
+        this.outsideWorkerMap = response.data.outsideWorkerMap;
         return {
           allWorkers: this.allWorkers,
           kitchenWorkers: this.kitchenWorkers,
@@ -31,14 +33,24 @@
     function hireAttempt(workers) {
       return $http.post('/api/worker/hireWorker', { rest: Restaurant.activeRestId, workers })
         .then(res => {
-          console.log('res');
-
           Restaurant.updateRest(res.data);
           return res.data;
         })
         .catch(err => {
           console.error(err);
-          throw 'Server error';
+          throw new Error('Unexpected server error');
+        });
+    }
+
+    function sendWorkers(type, data, target, id) {
+      return $http.post('/api/worker/moveWorkers', { rest: Restaurant.activeRestId, type, data, target, id })
+        .then(res => {
+          Restaurant.updateRest(res.data);
+          return res.data;
+        })
+        .catch(err => {
+          console.error(err);
+          throw new Error('Unexpected server error');
         });
     }
 
@@ -49,6 +61,8 @@
       hireAttempt,
       kitchenWorkers,
       outsideWorkers,
+      outsideWorkerMap,
+      sendWorkers,
       canTrainAny: canTrain,
     };
   }
