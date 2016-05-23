@@ -26,7 +26,7 @@ const RestaurantSchema = new Schema({
   resources: {
     loyals: {
       type: Number,
-      default: 10,
+      default: 20,
     },
     megabucks: {
       type: Number,
@@ -34,15 +34,15 @@ const RestaurantSchema = new Schema({
     },
     burgers: {
       type: Number,
-      default: 0,
+      default: 50,
     },
     fries: {
       type: Number,
-      default: 0,
+      default: 50,
     },
     drinks: {
       type: Number,
-      default: 0,
+      default: 50,
     },
   },
   moneyPercent: {
