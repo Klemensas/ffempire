@@ -9,7 +9,7 @@
   </div>
   <div class="chat-post-form">
     <form class="form" name="form" ng-submit="chat.postMessage(form)" novalidate>
-      <input type="text" name="content" class="chat-input" ng-model="chat.chatMessage.content" ng-minlength="10" ng-maxlength="200" required=""></input>
+      <input type="text" name="content" class="chat-input" ng-model="chat.chatMessage.content" ng-minlength="10" ng-maxlength="200" required="" placeholder="Between 10 and 200 symbols"></input>
       <button class="btn chat-post-button" type="submit">Post</button>
     </form>
   </div>

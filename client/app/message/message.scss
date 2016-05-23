@@ -7,6 +7,7 @@ $anon-color: #aeaeae;
   position: fixed;
   bottom: 5%;
   left: 3%;
+  z-index: 2;
   .chat-button {
     display: flex;
     justify-content: center;
@@ -33,6 +34,8 @@ $anon-color: #aeaeae;
     left: -1px;
     width: 25vw;
     height: 50vh;
+    min-width: 300px;
+    min-height: 200px;
     transform: scale(0);
     overflow: hidden;
     transition: transform 0.2s ease;
