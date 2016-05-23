@@ -1,8 +1,13 @@
 import _ from 'lodash';
+import mongoose from 'mongoose';
 import { Restaurant, updateRes } from './restaurant.model';
 import buildings from '../../config/game/buildings';
 import workers from '../../config/game/workers';
 import events from '../../components/events';
+import Promise from 'bluebird';
+
+const subscribedRestaurants = {};
+
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -121,9 +126,10 @@ export function updateQueues(req, res) {
   if (isOwner(req.user, req.params.id)) {
     return Restaurant.findById(req.params.id)
       .then(handleEntityNotFound(res))
+      .then(events.checkQueueAndUpdate)
       .then(rest => {
-        if (rest.events.soonest <= Date.now()) {
-          rest = events.checkQueueAndUpdate(rest);
+        // TODO: events moved to promise, no more checking if soonest is up?
+        // if (rest.events.soonest <= Date.now()) {
           rest = updateRes(rest);
           return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
           .then(r => {
@@ -132,9 +138,28 @@ export function updateQueues(req, res) {
             }
             return setTimeout(updateQueues, 10, req, res);
           });
-        }
-        return res.status(401).end();
+        // }
+        // return res.status(401).end();
       });
+  }
+  return res.status(401).end();
+}
+
+export function updateIncoming(req, res) {
+  if (isOwner(req.user, req.params.id)) {
+    const id = mongoose.Types.ObjectId(req.params.id);
+    const time = Date.now();
+    return findEndedEvents(id, time).then(ev => {
+        for (const sender of ev) {
+          return Restaurant.findById(sender._id)
+            .then(events.checkQueueAndUpdate)
+            .then(rest => {
+              rest = updateRes(rest);
+              return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
+                .then(() => res.status(200).end());
+            });
+        }
+    });
   }
   return res.status(401).end();
 }
@@ -146,8 +171,8 @@ export function upgradeBuilding(req, res) {
     const target = req.body.building;
     return Restaurant.findById(req.params.id)
       .then(handleEntityNotFound(res))
+      .then(events.checkQueueAndUpdate)
       .then(rest => {
-        rest = events.checkQueueAndUpdate(rest);
         rest = updateRes(rest);
 
         const queuedBuildings = events.queuedBuildings(rest.events.building);
@@ -203,6 +228,21 @@ export function setMoneyProd(req, res) {
   return res.status(401).end();
 }
 
+export function sseEvents(req, res) {
+  if (isOwner(req.user, req.params.id)) {
+    subscribedRestaurants[req.params.id] = res;
+
+    // Cleanup
+    res.on('close', () => {
+      delete subscribedRestaurants[req.params.id];
+    });
+    // Send initial data
+    sendEvents(req.params.id, res);
+  } else {
+    return res.status(404).end();
+  }
+}
+
 function canSetMoneyProd(rest) {
   // TODO: check if player can control money prod
   return true;
@@ -235,4 +275,66 @@ function findSuitable(list) {
     return [x, y];
   }
   return findSuitable(list);
+}
+
+export function sendMovementEvent(target, event) {
+  if (subscribedRestaurants[target]) {
+    subscribedRestaurants[target].sse(`data: ${JSON.stringify({ newMovement: event })}\n\n`);
+  }
+}
+
+export function sendRestaurantUpdate(target, restaurant) {
+  if (subscribedRestaurants[target]) {
+    subscribedRestaurants[target].sse(`data: ${JSON.stringify({ rest: restaurant })}\n\n`);
+  }
+}
+
+function findEvents(id) {
+  return Restaurant.aggregate([
+    { $match: { "$and": [{ "events.movement.targetId" : id },
+      { "events.movement.action" : {"$ne": "returning"} }]}},
+    { $project: { "location" : 1, "events.movement" : {
+      "$filter" : {
+        "input" : "$events.movement", 
+        "as" : "movement", 
+        "cond" : { "$eq" : ["$$movement.targetId", id] }
+      }
+    }}}
+  ]).exec();
+}
+
+function findEndedEvents(id, time) {
+  return Restaurant.aggregate([
+    { $match: { $and: [
+      { 'events.movement.targetId': id },
+      { 'events.movement.action': { $ne: 'returning' } },
+      { 'events.movement.ends': { $lte: new Date(time) } },
+    ] } },
+    { $project: { 'location': 1, 'events.movement': {
+      $filter: {
+        'input': '$events.movement',
+        'as': 'movement',
+        'cond': { '$eq' : ['$$movement.targetId', id] },
+      },
+    } } },
+  ]).exec();
+}
+
+function sendEvents(restId, res) {
+  const id = mongoose.Types.ObjectId(restId);
+  findEvents(id).then(data => {
+    const movements = [];
+    for (const sender of data) {
+      sender.events.movement.forEach(v =>
+        movements.push({
+          action: v.action,
+          ends: v.ends,
+          originId: sender._id,
+          location: sender.location,
+          queued: v.queued,
+        })
+      );
+    }
+    res.sse(`data: ${JSON.stringify({ movement: movements })}\n\n`);
+  });
 }

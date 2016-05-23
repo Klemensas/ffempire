@@ -1,5 +1,6 @@
 import workers from '../../config/game/workers';
 import { Restaurant, updateRes } from '../restaurant/restaurant.model';
+import { sendMovementEvent } from '../restaurant/restaurant.controller';
 import buildings from '../../config/game/buildings';
 import events from '../../components/events';
 import _ from 'lodash';
@@ -10,6 +11,7 @@ export function index(req, res) {
     allWorkers: workers.allWorkers,
     kitchenWorkers: workers.kitchenWorkerArray,
     outsideWorkers: workers.outsideWorkerArray,
+    outsideWorkerMap: workers.outsideWorkers,
   });
 }
 
@@ -69,3 +71,52 @@ export function hireWorkers(req, res) {
   return res.status(401).end();
 }
 
+export function moveWorkers(req, res) {
+  const data = req.body;
+  const units = data.data;
+  if (data.rest && isOwner(req.user, data.rest) && (data.type === 'attack' || data.type === 'support')) {
+    return validTarget(data.id, data.target)
+    .then(valid => {
+      if (!valid) {
+        return res.status(404).end();
+      }
+      return Restaurant.findById(data.rest)
+        .then(handleEntityNotFound(res))
+          .then(rest => {
+            if (!enoughToSend(rest.workers.outside, units)) {
+              return res.status(401).end();
+            }
+            const queuedEvent = events.queueMovement(rest, units, data.type, data.target, data.id);
+            rest = queuedEvent.rest;
+            rest = updateRes(rest);
+            return Restaurant.update({ _id: rest._id, nonce: rest.nonce }, rest)
+              .then(r => {
+                if (r.nModified) {
+                  sendMovementEvent(data.id, queuedEvent.event);
+                  return res.json(rest);
+                }
+                return setTimeout(moveWorkers, 10, req, res);
+              });
+          });
+    });
+  }
+  return res.status(401).end();
+}
+
+function validTarget(id, location) {
+  return Restaurant.count({ location, _id: id }).then(c => c);
+}
+
+function enoughToSend(allWorkers, sent) {
+  const unitTypes = Object.keys(sent);
+  if (!unitTypes.length) {
+    return false;
+  }
+  for (const unit of unitTypes) {
+    const target = allWorkers.find(w => w.title === unit);
+    if (!target || target.count < sent[unit].used - sent[unit].moving) {
+      return false;
+    }
+  }
+  return true;
+}
