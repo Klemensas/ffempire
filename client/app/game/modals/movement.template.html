@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <h3 class="modal-title">Send units</h3>
+</div>
+<div class="modal-body">
+    <ul>
+        <li ng-repeat="item in items">
+            <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
+        </li>
+    </ul>
+    <div class="row">
+      <div class="col-sm-6" ng-repeat="item in mv.workers">
+        <div class="row">
+          <div class="col-xs-5">{{item.title}}</div>
+          <div class="col-xs-7">
+            <span>({{item.free}})</span>
+            <input type="number" name="{{item.title}}" ng-model="item.used" ng-change="mv.inputUnit(item)" min="0" max="{{item.free}}">
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <span ng-show="mv.active">Arrives in: {{timeLeft(mv.travelTime)}}</span>
+    <button class="btn btn-danger" ng-disabled="!mv.active" type="button" ng-click="mv.send('attack')"><i class="fa fa-bomb" aria-hidden="true"></i> Attack</button>
+<!--     <button class="btn btn-success" ng-disabled="!mv.active" type="button" ng-click="mv.send('support')"><i class="fa fa-shield" aria-hidden="true"></i> Support</button> -->
+    <button class="btn btn-default pull-left" type="button" ng-click="mv.cancel()"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+</div>
