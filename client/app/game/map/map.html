@@ -15,11 +15,11 @@
             <div ng-repeat="col in row" data-field="{{col.field}}" class="map-field">
               <div ng-if="col.hasOwnProperty('owner')" class="restaurant {{gm.isOwned(col) ? 'owned' : ''}}">
                 <div ng-if="!gm.isOwned(col)" class="restaurant-interaction">
-                  <a class="profile"><i class="fa fa-user"></i></a>
-                  <a class="message"><i class="fa fa-envelope-o"></i></a>
+                  <!-- <a class="profile"><i class="fa fa-user"></i></a> -->
+                  <!-- <a class="message"><i class="fa fa-envelope-o"></i></a> -->
                   <a class="attack" ng-click="gm.sendUnits(col)"><i class="fa fa-bolt"></i></a>
-                  <a class="spy"><i class="fa fa-user-secret"></i></a>
-                  <a class="placeholder"><i class="fa fa-hourglass-o"></i></a>
+                  <!-- <a class="spy"><i class="fa fa-user-secret"></i></a> -->
+                  <!-- <a class="placeholder"><i class="fa fa-hourglass-o"></i></a> -->
                 </div>
               </div>
             </div>
