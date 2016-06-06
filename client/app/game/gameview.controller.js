@@ -1,6 +1,6 @@
 (function () {
   class GameViewController {
-    constructor(Restaurant, $interval, $timeout) {
+    constructor(Restaurant, $interval, $timeout, socket) {
       this.activeRest = Restaurant.activeRest;
       this.resources = Restaurant.modifyRes();
       this.production = Restaurant.production;
