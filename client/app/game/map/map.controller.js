@@ -1,9 +1,10 @@
 (function() {
   class MapController {
-    constructor($http, $scope, $uibModal, $timeout, Auth, Restaurant) {
+    constructor($http, $scope, $uibModal, $timeout, Auth, Restaurant, GameTour) {
       this.user = Auth.getCurrentUser();
       this.movement = Restaurant.activeRest.events.movement;
       this.Restaurant = Restaurant;
+      this.GameTour = GameTour;
 
       this.mapSize = 800;
       this.rowSize = 7;
@@ -57,6 +58,8 @@
       if (this.movement.length) {
         this.monitorMovement();
       }
+
+      $timeout(GameTour.startTour);
     }
 
     updateView(r) {
@@ -64,6 +67,7 @@
       if (this.movement.length) {
         this.monitorMovement();
       }
+      this.GameTour.startTour();
     }
 
     mapScroll(position) {

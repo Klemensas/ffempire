@@ -1,6 +1,6 @@
 (function () {
   class RestaurantController {
-    constructor($http, $scope, $timeout, Auth, Restaurant, Building, Worker) {
+    constructor($http, $scope, $timeout, Auth, Restaurant, Building, Worker, GameTour) {
       this.user = Auth.getCurrentUser();
       this.scope = $scope;
 
@@ -16,6 +16,7 @@
       this.Restaurant = Restaurant;
       this.Building = Building;
       this.Worker = Worker;
+      this.GameTour = GameTour;
 
       this.recruitErrorMessage = '';
 
@@ -66,6 +67,8 @@
       if (this.events.soonest) {
         this.monitorQueues();
       }
+
+      $timeout(() => this.GameTour.startTour(this));
     }
 
     updateView(r) {
@@ -84,6 +87,7 @@
         console.log('update enable monitoring')
         this.monitorQueues();
       }
+      this.GameTour.startTour(this);
     }
 
     upgrade(building) {
