@@ -73,6 +73,10 @@
   }
 }
 
+.popover {
+  max-width: 420px !important;
+}
+
 .incoming-event {
   & > div {
     padding: 1vh;

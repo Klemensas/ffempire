@@ -1,7 +1,7 @@
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-sm-12" id="worker-training">
     <button ng-if="gr.canTrainAny()" ng-click="gr.trainingActive = !gr.trainingActive" class="btn btn-primary">Worker training</button>
-    <div ng-if="gr.canControlMoney()" class="pull-right inline-flex">
+    <div ng-if="gr.canControlMoney()" id="money-produced" class="pull-right inline-flex">
       <input class="inline-range" type="range" id="soldPercent" min="0" max="100" value="{{gr.prodSold}}" ng-model="gr.prodSold" ng-change="gr.prodSoldChange(gr.prodSold)">
       <span> {{gr.prodSold}}% of your produced food is sold</span>
     </div>
@@ -51,7 +51,7 @@
     </div>
   </div>
   <div class="col-sm-12 margin-top-two">
-    <div ng-show="gr.events.building.length">
+    <div ng-show="gr.events.building.length" id="building-queue">
       <h4>Building queue</h4>
       <div ng-repeat="item in gr.events.building" class="row">
         <div class="col-sm-3">
@@ -87,8 +87,8 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-12 col-md-8 building-list">
-    <div class="building row" ng-repeat="building in gr.buildings" ng-if="gr.meetsRequirements(building)">
+  <div class="col-sm-12 col-md-8" id="building-list">
+    <div class="building row" id="{{building.title}}" ng-repeat="building in gr.buildings" ng-if="gr.meetsRequirements(building)">
       <div class="col-sm-7">
         <span class="building-detail-collapse" ng-click="building.details.active = !building.details.active"><i class="fa fa-chevron-down"></i></span>
         <span class="building-title">{{building.title}}</span>

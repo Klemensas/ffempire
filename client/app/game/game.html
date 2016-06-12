@@ -26,13 +26,13 @@
     </div>
   </div>
 </div>
-<div class="container">
+<div class="container" id="game-screen">
   <div class="top-part clearfix row">
-    <div class="col-sm-5 nav">
+    <div class="col-sm-5 nav" id="game-navigation">
       <div><a ui-sref="game.restaurant" ui-sref-active="active">restaurant</a></div>
       <div><a ui-sref="game.map" ui-sref-active="active">map</a></div>
     </div>
-    <div class="col-sm-7 row">
+    <div class="col-sm-7 row" id="resources">
       <div class="col-sm-2">Resources:</div>
       <div class="col-sm-2 resource"><i class="res fa fa-money"></i> (+{{gv.production.megabucks}}) {{gv.resources.megabucks}}</div>
       <div class="col-sm-2 resource"><i class="res res-burgers"></i> (+{{gv.production.burgers}}) {{gv.resources.burgers}}</div>
