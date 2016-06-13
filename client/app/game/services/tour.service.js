@@ -115,25 +115,25 @@
           content: `Lets see how our building queue is doing.<br><br>Switch back to restaurant view and
           we will continue once your level 2 kitchen is complete.`,
         },
-        { // 12
-          backdropPadding: 5,
-          placement: 'bottom',
-          element: '#worker-training',
-          template: template.replace('%nav%', navigation.none),
-          title: 'Worker training',
-          content: `Now you are able to train your first workers. Worker training button toggles this menu.
-          <br><br>The first three workers you can train produce valuable resources for you.
-          To continue queue 2 of each, this will help boost our resource production.`,
-        },
-        { // 13
-          backdropPadding: 5,
-          placement: 'bottom',
-          element: '#worker-training',
-          template: template.replace('%nav%', navigation.ok),
-          title: 'Worker training',
-          content: `Great, your resource production will get a boost once the workers are trained.<br><br>
-          To continue the tutorial save resources and reach level 5 kitchen.`,
-        },
+        // { // 12
+        //   backdropPadding: 5,
+        //   placement: 'bottom',
+        //   element: '#worker-training',
+        //   template: template.replace('%nav%', navigation.none),
+        //   title: 'Worker training',
+        //   content: `Now you are able to train your first workers. Worker training button toggles this menu.
+        //   <br><br>The first three workers you can train produce valuable resources for you.
+        //   To continue queue 2 of each, this will help boost our resource production.`,
+        // },
+        // // { // 13
+        // //   backdropPadding: 5,
+        // //   placement: 'bottom',
+        // //   element: '#worker-training',
+        // //   template: template.replace('%nav%', navigation.ok),
+        // //   title: 'Worker training',
+        // //   content: `Great, your resource production will get a boost once the workers are trained.<br><br>
+        // //   To continue the tutorial save resources and reach level 5 kitchen.`,
+        // // },
       ] });
 
     const requirements = {
