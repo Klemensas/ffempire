@@ -1,7 +1,7 @@
 'use strict';
 
 import _ from 'lodash';
-import Message from './message.model';
+import { User, Message } from '../../sqldb';
 import * as auth from '../../auth/auth.service';
 
 function respondWithResult(res, statusCode) {
@@ -53,9 +53,21 @@ function handleError(res, statusCode) {
 
 // Gets a list of Things
 export function index(req, res) {
-  Message.find().sort('createdAt').limit(20)
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+  res.status(200);
+  // return Message.findAll({
+  //     limit: 20,
+  //     order: [['createdAt', 'DESC']],
+  //     include: [
+  //       { model: User, required: false, attributes: ['name'] }
+  //     ]
+  //   }).map(m => {
+  //     return {
+  //       owner: m.User ? m.User.name : null,
+  //       content: m.content,
+  //     }
+  //   })
+  //   .then(respondWithResult(res))
+    // .catch(handleError(res));
 }
 
 // Gets a single Message from the DB
@@ -77,7 +89,6 @@ const validateJwt = expressJwt({
 
 // Creates a new Message in the DB
 export function create(req, res) {
-  console.log('hay der');
   let owner = null;
   if (req.user) {
     owner = req.user.name;

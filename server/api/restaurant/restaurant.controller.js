@@ -8,7 +8,6 @@ import Promise from 'bluebird';
 
 const subscribedRestaurants = {};
 
-
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
   return function(entity) {
@@ -118,6 +117,7 @@ export function getBuildings(req, res) {
     points: buildings.points,
     requirements: buildings.requirements,
     details: buildings.details,
+    stored: buildings.stored
   };
   return res.json(buildingData);
 }

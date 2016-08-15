@@ -5,17 +5,10 @@
 'use strict';
 
 import express from 'express';
-import mongoose from 'mongoose';
-mongoose.Promise = require('bluebird');
+import sqldb from './sqldb';
 import config from './config/environment';
 import http from 'http';
-
-// Connect to MongoDB
-mongoose.connect(config.mongo.uri, config.mongo.options);
-mongoose.connection.on('error', function(err) {
-  console.error('MongoDB connection error: ' + err);
-  process.exit(-1);
-});
+import map from './components/map';
 
 // Populate databases with sample data
 if (config.seedDB) { require('./config/seed'); }
@@ -40,7 +33,16 @@ function startServer() {
   });
 }
 
-setImmediate(startServer);
+sqldb.main.sequelize.sync()
+  .then(() => {
+    return sqldb.world.sequelize.sync()
+  })
+  .then(startServer)
+  .then(() => { // TODO: separate this into a startup service
 
+  })
+  .catch(function(err) {
+    console.log('Server failed to start due to error: %s', err);
+  });
 // Expose app
 exports = module.exports = app;

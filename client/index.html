@@ -30,6 +30,7 @@
 
     <!-- Add your site or application content here -->
     <navbar></navbar>
+    <div id="test"></div>
     <div ui-view=""></div>
     <div class="overlay chat {{chat.windowActive ? 'active' : ''}}" ng-controller="MessageController as chat" ng-include="'app/message/message.html'"></div>
     <footer></footer>
@@ -97,6 +98,7 @@
       <script src="components/navbar/navbar.controller.js"></script>
       <script src="components/navbar/navbar.directive.js"></script>
       <script src="components/util/util.service.js"></script>
+      <script src="test.js"></script>
       <!-- endinjector -->
     <!-- endbuild -->
   </body>

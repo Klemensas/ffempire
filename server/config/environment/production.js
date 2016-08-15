@@ -13,12 +13,15 @@ module.exports = {
           process.env.PORT ||
           80,
 
-  // MongoDB connection options
-  mongo: {
-    uri:  process.env.MONGOLAB_URI ||
-          process.env.MONGOHQ_URL ||
-          process.env.OPENSHIFT_MONGODB_DB_URL +
-          process.env.OPENSHIFT_APP_NAME ||
-          'mongodb://localhost/faster'
+  sequelize: {
+      options: {
+        logging: false/* console.log*/,
+        define: {
+          timestamps: true,
+          paranoid: false
+        }
+      },
+      main: 'postgres://ffe:test@localhost:5432/ffe',
+      world: 'postgres://ffe:test@localhost:5432/ffeWorld'
   }
 };

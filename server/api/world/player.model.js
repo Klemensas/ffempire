@@ -1,17 +1,15 @@
 export default function(sequelize, DataTypes) {
-  return sequelize.define('Message', {
+  return sequelize.define('Player', {
     _id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    content: {
-      type: DataTypes.STRING,
-      validate: {
-        notEmpty: true,
-        len: [10, 200],
-      }
+    UserId: {
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+      allowNull: false
     }
   });
 }

@@ -180,6 +180,15 @@ const details = {
 
 const resources = ['megabucks', 'burgers', 'fries', 'drinks', 'loyals'];
 
+const stored = [
+  400,
+  496,
+  615,
+  762,
+  944,
+  1170
+]
+
 function levelCosts(building, level) {
   return typeof costs[building] !== 'undefined' ? costs[building][level] : undefined;
 }
@@ -222,6 +231,7 @@ export default {
   points,
   requirements,
   resources,
+  stored,
   costsNamed: toObject(costs, resources),
 };
 

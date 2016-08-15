@@ -1,8 +1,10 @@
 (function () {
   class GameViewController {
-    constructor(Restaurant, $interval, $timeout) {
+    constructor(Restaurant, Building, $interval, $timeout) {
       this.activeRest = Restaurant.activeRest;
       this.resources = Restaurant.modifyRes();
+      console.log(Building.currentStorage);
+      // this.storage = Building.stored[] 
       this.production = Restaurant.production;
       this.incomingUnits = Restaurant.movement.incoming;
       this.Restaurant = Restaurant;

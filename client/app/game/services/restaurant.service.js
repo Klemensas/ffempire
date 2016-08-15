@@ -26,6 +26,7 @@
     const movement = {
       incoming: [],
     };
+    let gameData = {};
 
     function getMapRestaurants() {
       if (this.mapRestaurantLocs.length !== 0) {
@@ -43,6 +44,16 @@
         this.mapRestaurantLocs = Object.keys(this.mapRestaurants);
         console.timeEnd('Restaurant list start');
         return this.mapRestaurants;
+      });
+    }
+
+    function getGameData() {
+      if (this.gameData) {
+        return this.gameData;
+      }
+      return $http.get('/api/restaurant/gameData').then(response => {
+        this.gameData = response.data;
+        return this.gameData;
       });
     }
 
@@ -202,6 +213,7 @@
       calculateProd,
       checkQueue,
       displayedRestaurants,
+      getGameData,
       getMapRestaurants,
       movement,
       mapRestaurants,

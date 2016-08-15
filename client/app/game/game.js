@@ -6,7 +6,7 @@ angular.module('faster')
         templateUrl: 'app/game/game.html',
         abstract: true,
         authenticate: true,
-        resolve: {
+        resolve: { // TODO: merge these into one endpoint for all game data
           buildingPromise: ['Building', Building => Building.getBuildings()],
           workerPromise: ['Worker', Worker => Worker.getWorkerData()],
         },

@@ -4,6 +4,7 @@ import passport from 'passport';
 import {Strategy as LocalStrategy} from 'passport-local';
 
 function localAuthenticate(User, email, password, done) {
+  console.log('uhuh')
   User.findOne({
     email: email.toLowerCase()
   })
@@ -24,7 +25,10 @@ function localAuthenticate(User, email, password, done) {
         }
       });
     })
-    .catch(err => done(err));
+    .catch(err => {
+      console.log('error', err)
+      return done(err)
+    });
 }
 
 export function setup(User, config) {

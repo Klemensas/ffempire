@@ -4,11 +4,13 @@
     const costs = {};
     const details = {};
     const points = {};
+    const stored = [];
     const requirements = {};
+    let currentStorage = 0;
     let currentPoints = 0;
     let queuedLevels = {};
 
-    function mapBuildingValues(costs = this.costs, buildTimes = this.buildTimes) {
+    function mapBuildingValues(costs = this.costs, buildTimes = this.buildTimes, stored = this.stored, currentStorage = this.currentStorage) {
       queuedLevels = {};
       for (const build of Restaurant.activeRest.events.building) {
         queuedLevels[build.target] = queuedLevels[build.target] + 1 || 1;
@@ -18,6 +20,9 @@
         building.costs = costs[building.title][building.level + plusQ];
         building.buildTime = buildTimes[building.title][building.level + plusQ];
         building.queued = plusQ;
+        if (building.title === 'storage') {
+          currentStorage = stored[building.level];
+        }
       }
     }
 
@@ -28,8 +33,10 @@
           this.costs = res.data.costs;
           this.details = res.data.details;
           this.points = res.data.points;
+          this.stored = res.data.stored;
           this.requirements = res.data.requirements;
-          mapBuildingValues(this.costs, this.buildTimes);
+          mapBuildingValues(this.costs, this.buildTimes, this.stored, this.currentStorage);
+          console.log(this.currentStorage);
           this.currentPoints = calculatePoints(this.points);
           return this;
         })
@@ -88,6 +95,7 @@
       buildingCosts,
       calculatePoints,
       currentPoints,
+      currentStorage,
       costs,
       details,
       mapBuildingValues,
