@@ -1,4 +1,7 @@
-let pos = [0, 0];
+let pos = {
+  y: 0,
+  x: 0
+};
 let screen = [800, 450];
 
 
@@ -15,7 +18,7 @@ ctx.strokeStyle = "#000000";
 ctx.font = "24px serif";
 ctx.lineWidth = 0;
 
-setTimeout(initMap, 0, ctx, screen);
+setTimeout(initMap, 0, ctx, screen, pos);
 
 function initMap(ctx, screen, pos) {
   const width = screen[0] / 9;
@@ -37,7 +40,8 @@ function initMap(ctx, screen, pos) {
   let images = [];
   imgPreload(imgs, ims => {
     images = ims;
-    drawBoard(ctx, screen, pixelsToHex(0, height*1.8, width, height), images);
+    pos.y = height * 0.;
+    drawBoard(ctx, screen, pixelsToHex(pos, width, height), images);
   });
 
 
@@ -47,19 +51,21 @@ function initMap(ctx, screen, pos) {
     clickX: 0,
     clickY: 0
   };
-
   canvas.addEventListener('mousedown', e => {
-    offset.clickX = e.offsetX;
-    offset.clickY = e.offsetY;
-    console.log(offset, canvas.offsetTop)
+    offset.clickX = e.offsetX + offset.x;
+    offset.clickY = e.offsetY + offset.y;
+    console.log(pos);
     canvas.addEventListener('mousemove', dragMap)
   });
-  canvas.addEventListener('mouseup', () => {
-    console.log('click down');
+  canvas.addEventListener('mouseup', e => {
+    pos.x += e.clientX - offset.clickX,
+    pos.y += e.clientY - offset.clickY
     canvas.removeEventListener('mousemove', dragMap);
   });
 
   function drawBoard(canvasContext, screen, topSide, images) {
+    console.log(topSide);
+    // topSide.xOffset = 0;
     // console.log(topSide);
     let fillY, fillX = fillY = true;
     canvasContext.clearRect(0, 0, screen[0], screen[1])
@@ -68,14 +74,18 @@ function initMap(ctx, screen, pos) {
       fillY = y + aHeight < screen[1];
       fillX = true;
       for (let j = 0; fillX; ++j) {
-        const offset = (i % 2) * radius;
+        const offset = (i + topSide.y) % 2 * radius;
         const pos = j * width - offset + topSide.xOffset;
-        // const x = j === 0 && pos < width ? 0 : pos;
-        const x = /*j === 0 && pos < width ? 0 :*/ pos;
+        const x = pos;
         fillX = x + width < screen[0];
-        drawHexagon(ctx, x, y, images[ (i + j) % images.length], j + topSide.x, i + topSide.y);
+        // console.log(y, x)
+        drawHexagon(ctx, x, y, images[Math.round(rng(`${i + topSide.y},${j + topSide.x}`) * (images.length - 1))], j + topSide.x, i + topSide.y);
       }
     }
+  }
+
+  function rng(string) {
+    return new Math.seedrandom(string).quick();
   }
 
   function drawHexagon(canvasContext, x, y, img, hx, hy) {
@@ -95,29 +105,63 @@ function initMap(ctx, screen, pos) {
     canvasContext.fillText(`${hx},${hy}`, x + width / 2 - 15, y + height / 2 + 5);
   }
 
-  function pixelsToHex(x, y, width, height) {
-    let yHex = y / (height * 0.75);
+  function pixelsToHex(pos, width, height) {
+    let yHex = pos.y / (height * 0.75);
+    // console.log(yHex, yHex % 1);
     yHex = yHex % 1 <= 0.25 ? yHex - 0.25 : yHex;
-    console.log(yHex, (yHex - Math.floor(yHex)), yHex % 1)
-    const adjustedX = x - Math.floor(yHex) % 2 * width / 2;
-    const xHex = adjustedX / width;
-    // const yHux = y / (height * 0.75);
-    // console.log(Math.floor(xHex), xHex, yHex  )
-    // const t = y / height * 1.25;
+    console.log(yHex);
+    // yHex = yHex % 1 <= 0.25 ? yHex - 0.25 : yHex;
+    // const adjustedX = pos.x - Math.floor(yHex + 1) % 2 * width / 2 ;
+    // const adjustedX = 0;
+    // adjustedX = 0
+    // console.log(Math.floor(yHex) % 2)
+    const xHex = pos.x / width;
+    const x = Math.floor(xHex);
+    const y = Math.floor(yHex);
+    console.log(yHex % 1, yHex, y)
+    let yOffset = - (yHex % 1) * height;
+    if (yHex < 0) {
+      yOffset -= 1 * height;
+    }
     return {
-      x: Math.floor(xHex),
-      y: Math.floor(yHex),
-      xOffset: - (xHex - Math.floor(xHex)) * width,
-      // yOffset: - (yHex - Math.floor(yHex)) * height * 0.75
-      yOffset: - (yHex % 1) * height
+      y,
+      x,
+      yOffset,
+      // xOffset: - (xHex - Math.floor(xHex)) * width,
+      xOffset: - (xHex % 1) * width,
     }
   }
 
-  function dragMap(ev) {
-    ev.preventDefault();
-    const x = ev.clientX - offset.x - offset.clickX;
-    const y = ev.clientY - offset.y - offset.clickY;
-    drawBoard(ctx, screen, pixelsToHex(x, y, width, height), images)
+  // function pixelsToHex(pos, width, height) {
+  //   let yHex = pos.y / (height * 0.75);
+  //   yHex = yHex % 1 <= 0.25 ? yHex - 0.25 : yHex;
+  //   // const adjustedX = pos.x - Math.floor(yHex + 1) % 2 * width / 2 ;
+  //   // const adjustedX = 0;
+  //   // adjustedX = 0
+  //   // console.log(Math.floor(yHex) % 2)
+  //   const xHex = pos.x / width;
+  //   const x = Math.floor(xHex);
+  //   const y = Math.floor(yHex);
+  //   let yOffset = - yHex % 1 * height;
+  //   if (yHex < 0) {
+  //     yOffset -= 1 * height;
+  //   }
+  //   return {
+  //     y,
+  //     x,
+  //     yOffset,
+  //     // xOffset: - (xHex - Math.floor(xHex)) * width,
+  //     xOffset: - (xHex - x) * width,
+  //   }
+  // }
+
+  function dragMap(e) {
+    e.preventDefault();
+    const l = {
+      x: pos.x + e.clientX - offset.clickX,
+      y: pos.y + e.clientY - offset.clickY
+    };
+    drawBoard(ctx, screen, pixelsToHex(l, width, height), images)
     // console.log('move', x, y, offset.clickY);
   }
 }
