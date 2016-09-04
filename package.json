@@ -30,6 +30,7 @@
     "serve-favicon": "^2.3.0"
   },
   "devDependencies": {
+    "ava": "^0.16.0",
     "babel-core": "^6.9.0",
     "babel-eslint": "^5.0.0",
     "babel-polyfill": "^6.7.2",
@@ -72,5 +73,8 @@
     "open": "0.0.5",
     "run-sequence": "^1.1.5",
     "wiredep": "^3.0.0"
+  },
+  "scripts": {
+    "test": "ava"
   }
 }
