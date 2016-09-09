@@ -1,3 +1,5 @@
+# DEPRECATED
+
 # [Fast Food Empire](https://klemensas.xyz)
 
 
